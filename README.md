@@ -1,1 +1,5 @@
-# Ray tracing Renderer based on _Ray Tracing in One Weekend_
+# Ray tracing Renderer 
+* Based on Peter Shirley's famous trilogy of ray tracing: 
+_**Ray Tracing: in One Weekend**_ /
+_**Ray Tracing: The Next Week**_ /
+_**Ray Tracing: The Rest of Your Life**_
