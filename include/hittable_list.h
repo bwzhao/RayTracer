@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hittable.h"
+#include "aabb.h"
 
 #include <memory>
 #include <vector>
@@ -18,6 +19,8 @@ public:
 
     virtual bool hit(
             const ray& r, double t_min, double t_max, hit_record& rec) const override;
+    virtual bool bounding_box(
+            double time0, double time1, aabb& output_box) const override;
 
 public:
     std::vector<shared_ptr<hittable>> objects_;
@@ -37,4 +40,19 @@ bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& re
     }
 
     return hit_anything;
+}
+
+bool hittable_list::bounding_box(double time0, double time1, aabb& output_box) const {
+    if (objects_.empty()) return false;
+
+    aabb temp_box;
+    bool first_box = true;
+
+    for (const auto& object : objects_) {
+        if (!object->bounding_box(time0, time1, temp_box)) return false;
+        output_box = first_box ? temp_box : surrounding_box(output_box, temp_box);
+        first_box = false;
+    }
+
+    return true;
 }

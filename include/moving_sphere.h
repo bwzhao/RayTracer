@@ -3,6 +3,7 @@
 #include "utils.h"
 
 #include "hittable.h"
+#include "aabb.h"
 
 class moving_sphere : public hittable {
 public:
@@ -14,6 +15,8 @@ public:
 
     virtual bool hit(
             const ray& r, double t_min, double t_max, hit_record& rec) const override;
+    virtual bool bounding_box(
+            double _time0, double _time1, aabb& output_box) const override;
 
     point3 center(double time) const;
 
@@ -53,5 +56,16 @@ bool moving_sphere::hit(const ray& r, double t_min, double t_max, hit_record& re
     rec.set_face_normal(r, outward_normal);
     rec.mat_ptr_ = mat_ptr_;
 
+    return true;
+}
+
+bool moving_sphere::bounding_box(double _time0, double _time1, aabb& output_box) const {
+    aabb box0(
+            center(_time0) - vec3(radius_, radius_, radius_),
+            center(_time0) + vec3(radius_, radius_, radius_));
+    aabb box1(
+            center(_time1) - vec3(radius_, radius_, radius_),
+            center(_time1) + vec3(radius_, radius_, radius_));
+    output_box = surrounding_box(box0, box1);
     return true;
 }
