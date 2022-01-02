@@ -11,7 +11,9 @@ public:
             double vfov, // vertical field-of-view in degrees
             double aspect_ratio,
             double aperture,
-            double focus_dist
+            double focus_dist,
+            double time0,
+            double time1
     ) {
         auto theta = degrees_to_radians(vfov);
         auto h = tan(theta/2);
@@ -28,6 +30,9 @@ public:
         lower_left_corner_ = origin_ - horizontal_/2 - vertical_/2 - focus_dist * w_;
 
         lens_radius_ = aperture / 2;
+
+        time0_ = time0;
+        time1_ = time1;
     }
 
     ray get_ray(double s, double t) const {
@@ -36,7 +41,8 @@ public:
 
         return ray(
                 origin_ + offset,
-                lower_left_corner_ + s*horizontal_ + t*vertical_ - origin_ - offset
+                lower_left_corner_ + s*horizontal_ + t*vertical_ - origin_ - offset,
+                random_double(time0_, time1_)
         );
     }
 
@@ -47,4 +53,5 @@ private:
     vec3 vertical_;
     vec3 u_, v_, w_;
     double lens_radius_;
+    double time0_, time1_;
 };

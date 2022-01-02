@@ -1,5 +1,3 @@
-# Ray tracing Renderer 
-* Based on Peter Shirley's famous trilogy of ray tracing:
-    - _**Ray Tracing: in One Weekend**_：  https://raytracing.github.io/books/RayTracingInOneWeekend.html
-    - _**Ray Tracing: The Next Week**_：
-    - _**Ray Tracing: The Rest of Your Life**_：
+# Ray Tracing Renderer
+* As the first step, the renderer is based on Peter Shirley's famous trilogy of ray tracing: https://raytracing.github.io
+* I will also add some new features to this renderer, and ways of acceleration.
