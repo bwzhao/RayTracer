@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils.h"
+#include "rt_utils.h"
 #include "image_utils.h"
 
 #include "perlin.h"

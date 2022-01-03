@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "rt_utils.h"
 
 #include "color.h"
 #include "hittable_list.h"
@@ -29,10 +29,15 @@ color ray_color(const ray& r, const color& background, const hittable& world, in
     color attenuation;
     color emitted = rec.mat_ptr_->emitted(rec.u_, rec.v_, rec.p_);
 
-    if (!rec.mat_ptr_->scatter(r, rec, attenuation, scattered))
+    double pdf;
+    color albedo;
+
+    if (!rec.mat_ptr_->scatter(r, rec, albedo, scattered, pdf))
         return emitted;
 
-    return emitted + attenuation * ray_color(scattered, background, world, depth-1);
+    return emitted
+           + albedo * rec.mat_ptr_->scattering_pdf(r, rec, scattered)
+             * ray_color(scattered, background, world, depth-1) / pdf;
 }
 
 hittable_list two_spheres() {
@@ -138,11 +143,11 @@ hittable_list cornell_box() {
     objects.add(make_shared<yz_rect>(0, 555, 0, 555, 555, green));
     objects.add(make_shared<yz_rect>(0, 555, 0, 555, 0, red));
     objects.add(make_shared<xz_rect>(213, 343, 227, 332, 554, light));
-    objects.add(make_shared<xz_rect>(0, 555, 0, 555, 0, white));
     objects.add(make_shared<xz_rect>(0, 555, 0, 555, 555, white));
+    objects.add(make_shared<xz_rect>(0, 555, 0, 555, 0, white));
     objects.add(make_shared<xy_rect>(0, 555, 0, 555, 555, white));
 
-    shared_ptr<hittable> box1 = make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), white);
+    shared_ptr<hittable> box1 = make_shared<box>(point3(0,0,0), point3(165,330,165), white);
     box1 = make_shared<rotate_y>(box1, 15);
     box1 = make_shared<translate>(box1, vec3(265,0,295));
     objects.add(box1);
@@ -250,98 +255,33 @@ hittable_list final_scene() {
 
 
 int main() {
-    // Image
-    auto aspect_ratio = 16.0 / 9.0;
-    int image_width = 400;
-    int samples_per_pixel = 100;
+// Image
+    const auto aspect_ratio = 1.0 / 1.0;
+    const int image_width = 600;
+    const int image_height = static_cast<int>(image_width / aspect_ratio);
+    const int samples_per_pixel = 100;
     const int max_depth = 50;
 
-//    // World
-    hittable_list world;
+    // World
 
-    point3 lookfrom;
-    point3 lookat;
-    auto vfov = 40.0;
-    auto aperture = 0.0;
+    auto world = cornell_box();
+
     color background(0,0,0);
 
-    switch (0) {
-        case 1:
-            world = random_scene();
-            background = color(0.70, 0.80, 1.00);
-            lookfrom = point3(13,2,3);
-            lookat = point3(0,0,0);
-            vfov = 20.0;
-            aperture = 0.1;
-            break;
-        case 2:
-            world = two_spheres();
-            background = color(0.70, 0.80, 1.00);
-            lookfrom = point3(13,2,3);
-            lookat = point3(0,0,0);
-            vfov = 20.0;
-            break;
-        case 3:
-            world = two_perlin_spheres();
-            background = color(0.70, 0.80, 1.00);
-            lookfrom = point3(13,2,3);
-            lookat = point3(0,0,0);
-            vfov = 20.0;
-            break;
-        case 4:
-            world = earth();
-            background = color(0.70, 0.80, 1.00);
-            lookfrom = point3(13,2,3);
-            lookat = point3(0,0,0);
-            vfov = 20.0;
-            break;
-        case 5:
-            world = simple_light();
-            samples_per_pixel = 400;
-            background = color(0,0,0);
-            lookfrom = point3(26,3,6);
-            lookat = point3(0,2,0);
-            vfov = 20.0;
-            break;
-        case 6:
-            world = cornell_box();
-            aspect_ratio = 1.0;
-            image_width = 600;
-            samples_per_pixel = 200;
-            background = color(0,0,0);
-            lookfrom = point3(278, 278, -800);
-            lookat = point3(278, 278, 0);
-            vfov = 40.0;
-            break;
-        case 7:
-            world = cornell_smoke();
-            aspect_ratio = 1.0;
-            image_width = 600;
-            samples_per_pixel = 200;
-            lookfrom = point3(278, 278, -800);
-            lookat = point3(278, 278, 0);
-            vfov = 40.0;
-            break;
-        default:
-        case 8:
-            world = final_scene();
-            aspect_ratio = 1.0;
-            image_width = 800;
-            samples_per_pixel = 100;
-            background = color(0,0,0);
-            lookfrom = point3(478, 278, -600);
-            lookat = point3(278, 278, 0);
-            vfov = 40.0;
-            break;
-    }
+    // Camera
 
-// Camera
-
-    vec3 vup(0,1,0);
+    point3 lookfrom(278, 278, -800);
+    point3 lookat(278, 278, 0);
+    vec3 vup(0, 1, 0);
     auto dist_to_focus = 10.0;
-    int image_height = static_cast<int>(image_width / aspect_ratio);
+    auto aperture = 0.0;
+    auto vfov = 40.0;
+    auto time0 = 0.0;
+    auto time1 = 1.0;
 
-    camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
+    camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, time0, time1);
+
+    // Render
 
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 

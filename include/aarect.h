@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils.h"
+#include "rt_utils.h"
 
 #include "hittable.h"
 
