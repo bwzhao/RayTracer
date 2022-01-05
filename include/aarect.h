@@ -61,6 +61,23 @@ public:
         return true;
     }
 
+    virtual double pdf_value(const point3& origin, const vec3& v) const override {
+        hit_record rec;
+        if (!this->hit(ray(origin, v), 0.001, infinity, rec))
+            return 0;
+
+        auto area = (x1_-x0_)*(z1_-z0_);
+        auto distance_squared = rec.t_ * rec.t_ * v.length_squared();
+        auto cosine = fabs(dot(v, rec.normal_) / v.length());
+
+        return distance_squared / (cosine * area);
+    }
+
+    virtual vec3 random(const point3& origin) const override {
+        auto random_point = point3(random_double(x0_, x1_), k_, random_double(z0_, z1_));
+        return random_point - origin;
+    }
+
 public:
     shared_ptr<material> mp_;
     double x0_, x1_, z0_, z1_, k_;

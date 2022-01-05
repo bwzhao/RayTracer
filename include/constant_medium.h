@@ -71,7 +71,7 @@ bool constant_medium::hit(const ray& r, double t_min, double t_max, hit_record& 
     if (debugging) {
         std::cerr << "hit_distance = " <<  hit_distance << '\n'
                   << "rec.t = " <<  rec.t_ << '\n'
-                  << "rec.p = " <<  rec.p_ << '\n';
+                  << "rec.p_ = " <<  rec.p_ << '\n';
     }
 
     rec.normal_ = vec3(1,0,0);  // arbitrary

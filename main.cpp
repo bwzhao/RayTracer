@@ -14,7 +14,10 @@
 #include <iostream>
 const double SIGMA = 0.001;
 
-color ray_color(const ray& r, const color& background, const hittable& world, int depth) {
+color ray_color(
+        const ray& r, const color& background, const hittable& world,
+        shared_ptr<hittable>& lights, int depth
+) {
     hit_record rec;
 
     // If we've exceeded the ray bounce limit, no more light is gathered.
@@ -29,15 +32,22 @@ color ray_color(const ray& r, const color& background, const hittable& world, in
     color attenuation;
     color emitted = rec.mat_ptr_->emitted(rec.u_, rec.v_, rec.p_);
 
-    double pdf;
+    double pdf_val;
     color albedo;
 
-    if (!rec.mat_ptr_->scatter(r, rec, albedo, scattered, pdf))
+    if (!rec.mat_ptr_->scatter(r, rec, albedo, scattered, pdf_val))
         return emitted;
+
+    auto p0 = make_shared<hittable_pdf>(lights, rec.p_);
+    auto p1 = make_shared<cosine_pdf>(rec.normal_);
+    mixture_pdf mixed_pdf(p0, p1);
+
+    scattered = ray(rec.p_, mixed_pdf.generate(), r.time());
+    pdf_val = mixed_pdf.value(scattered.direction());
 
     return emitted
            + albedo * rec.mat_ptr_->scattering_pdf(r, rec, scattered)
-             * ray_color(scattered, background, world, depth-1) / pdf;
+             * ray_color(scattered, background, world, lights, depth-1) / pdf_val;
 }
 
 hittable_list two_spheres() {
@@ -142,7 +152,7 @@ hittable_list cornell_box() {
 
     objects.add(make_shared<yz_rect>(0, 555, 0, 555, 555, green));
     objects.add(make_shared<yz_rect>(0, 555, 0, 555, 0, red));
-    objects.add(make_shared<xz_rect>(213, 343, 227, 332, 554, light));
+    objects.add(make_shared<flip_face>(make_shared<xz_rect>(213, 343, 227, 332, 554, light)));
     objects.add(make_shared<xz_rect>(0, 555, 0, 555, 555, white));
     objects.add(make_shared<xz_rect>(0, 555, 0, 555, 0, white));
     objects.add(make_shared<xy_rect>(0, 555, 0, 555, 555, white));
@@ -265,6 +275,8 @@ int main() {
     // World
 
     auto world = cornell_box();
+    shared_ptr<hittable> lights =
+            make_shared<xz_rect>(213, 343, 227, 332, 554, shared_ptr<material>());
 
     color background(0,0,0);
 
@@ -293,7 +305,7 @@ int main() {
                 auto u = (i + random_double()) / (image_width-1);
                 auto v = (j + random_double()) / (image_height-1);
                 ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, background, world, max_depth);
+                pixel_color += ray_color(r, background, world, lights, max_depth);
             }
             write_color(std::cout, pixel_color, samples_per_pixel);
         }

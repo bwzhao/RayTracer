@@ -10,13 +10,12 @@ inline double pdf(const vec3& p) {
 }
 
 int main() {
-    int N = 1000000;
-    auto sum = 0.0;
-    for (int i = 0; i < N; i++) {
-        vec3 d = random_unit_vector();
-        auto cosine_squared = d.z()*d.z();
-        sum += cosine_squared / pdf(d);
+    for (int i = 0; i < 200; i++) {
+        auto r1 = random_double();
+        auto r2 = random_double();
+        auto x = cos(2*pi*r1)*2*sqrt(r2*(1-r2));
+        auto y = sin(2*pi*r1)*2*sqrt(r2*(1-r2));
+        auto z = 1 - 2*r2;
+        std::cout << x << " " << y << " " << z << '\n';
     }
-    std::cout << std::fixed << std::setprecision(12);
-    std::cout << "I = " << sum/N << '\n';
 }

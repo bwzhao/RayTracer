@@ -3,6 +3,8 @@
 #include "rt_utils.h"
 
 #include "texture.h"
+#include "onb.h"
+#include "pdf.h"
 
 struct hit_record;
 
@@ -33,10 +35,13 @@ public:
     virtual bool scatter(
             const ray& r_in, const hit_record& rec, color& alb, ray& scattered, double& pdf
     ) const override {
-        auto direction = random_in_hemisphere(rec.normal_);
+        onb uvw;
+        uvw.build_from_w(rec.normal_);
+        auto direction = uvw.local(random_cosine_direction());
+
         scattered = ray(rec.p_, unit_vector(direction), r_in.time());
         alb = albedo_->value(rec.u_, rec.v_, rec.p_);
-        pdf = dot(rec.normal_, scattered.direction()) / pi;
+        pdf = dot(uvw.w(), scattered.direction()) / pi;
 
         return true;
     }
@@ -125,6 +130,15 @@ public:
         return emit_->value(u, v, p);
     }
 
+    virtual color emitted(const ray& r_in, const hit_record& rec, double u, double v,
+                          const point3& p) const {
+
+        if (rec.front_face_)
+            return emit_->value(u, v, p);
+        else
+            return color(0,0,0);
+    }
+
 public:
     shared_ptr<texture> emit_;
 };
@@ -145,4 +159,5 @@ public:
 public:
     shared_ptr<texture> albedo_;
 };
+
 
