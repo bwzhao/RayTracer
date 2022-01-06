@@ -21,6 +21,8 @@ public:
             const ray& r, double t_min, double t_max, hit_record& rec) const override;
     virtual bool bounding_box(
             double time0, double time1, aabb& output_box) const override;
+    double pdf_value(const point3& o, const vec3& v) const;
+    vec3 random(const vec3& o) const;
 
 public:
     std::vector<shared_ptr<hittable>> objects_;
@@ -55,4 +57,19 @@ bool hittable_list::bounding_box(double time0, double time1, aabb& output_box) c
     }
 
     return true;
+}
+
+double hittable_list::pdf_value(const point3& o, const vec3& v) const {
+    auto weight = 1.0/objects_.size();
+    auto sum = 0.0;
+
+    for (const auto& object : objects_)
+        sum += weight * object->pdf_value(o, v);
+
+    return sum;
+}
+
+vec3 hittable_list::random(const vec3& o) const {
+    auto int_size = static_cast<int>(objects_.size());
+    return objects_[random_int(0, int_size-1)]->random(o);
 }
