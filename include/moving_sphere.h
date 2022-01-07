@@ -31,7 +31,6 @@ point3 moving_sphere::center(double time) const {
     return center0_ + ((time - time0_) / (time1_ - time0_)) * (center1_ - center0_);
 }
 
-
 bool moving_sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
     vec3 oc = r.origin() - center(r.time());
     auto a = r.direction().length_squared();
@@ -66,6 +65,6 @@ bool moving_sphere::bounding_box(double _time0, double _time1, aabb& output_box)
     aabb box1(
             center(_time1) - vec3(radius_, radius_, radius_),
             center(_time1) + vec3(radius_, radius_, radius_));
-    output_box = surrounding_box(box0, box1);
+    output_box = aabb::surrounding_box(box0, box1);
     return true;
 }

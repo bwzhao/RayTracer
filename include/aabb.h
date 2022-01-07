@@ -1,6 +1,8 @@
 #pragma once
 
 #include "rt_utils.h"
+#include "vec3.h"
+#include "ray.h"
 
 class aabb {
 public:
@@ -11,6 +13,7 @@ public:
     point3 max() const {return maximum_; }
 
     bool hit(const ray& r, double t_min, double t_max) const;
+    static aabb surrounding_box(aabb box0, aabb box1);
 
     point3 minimum_;
     point3 maximum_;
@@ -32,14 +35,3 @@ inline bool aabb::hit(const ray& r, double t_min, double t_max) const {
     return true;
 }
 
-aabb surrounding_box(aabb box0, aabb box1) {
-    point3 small(fmin(box0.min().x(), box1.min().x()),
-                 fmin(box0.min().y(), box1.min().y()),
-                 fmin(box0.min().z(), box1.min().z()));
-
-    point3 big(fmax(box0.max().x(), box1.max().x()),
-               fmax(box0.max().y(), box1.max().y()),
-               fmax(box0.max().z(), box1.max().z()));
-
-    return aabb(small,big);
-}

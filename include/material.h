@@ -36,7 +36,6 @@ public:
     }
 };
 
-
 class lambertian : public material {
 public:
     lambertian(const color& a) : albedo_(make_shared<solid_color>(a)) {}
@@ -62,7 +61,6 @@ public:
     shared_ptr<texture> albedo_;
 };
 
-
 class metal : public material {
 public:
     metal(const color& a, double f) : albedo_(a), fuzz_(f < 1 ? f : 1) {}
@@ -82,7 +80,6 @@ public:
     color albedo_;
     double fuzz_;
 };
-
 
 class dielectric : public material {
 public:

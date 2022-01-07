@@ -7,9 +7,8 @@ set(INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/include/
         )
 
-file(GLOB_RECURSE SOURCE_FILES
-        main.cpp
-        src/*.cpp
+file(GLOB SOURCE_FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
         )
 
 set(SOURCE_FILES_PI pi.cpp)
@@ -18,7 +17,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-add_executable(RayTracer ${SOURCE_FILES})
+add_executable(RayTracer main.cpp ${SOURCE_FILES})
 target_include_directories(RayTracer PUBLIC ${INCLUDE_DIRECTORIES})
 
 add_executable(Pi ${SOURCE_FILES_PI})

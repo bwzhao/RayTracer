@@ -26,7 +26,6 @@ private:
     color color_value_;
 };
 
-
 class checker_texture : public texture {
 public:
     checker_texture() {}
