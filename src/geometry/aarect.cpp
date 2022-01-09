@@ -1,6 +1,6 @@
-#include "aarect.h"
+#include "geometry/aarect.h"
 
-bool xy_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+bool XYRect::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const {
     auto t = (k_-r.origin().z()) / r.direction().z();
     if (t < t_min || t > t_max)
         return false;
@@ -11,14 +11,14 @@ bool xy_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) con
     rec.u_ = (x-x0_)/(x1_-x0_);
     rec.v_ = (y-y0_)/(y1_-y0_);
     rec.t_ = t;
-    auto outward_normal = vec3(0, 0, 1);
+    auto outward_normal = Vec3(0, 0, 1);
     rec.set_face_normal(r, outward_normal);
     rec.mat_ptr_ = mp_;
     rec.p_ = r.at(t);
     return true;
 }
 
-bool xz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+bool XZRect::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const {
     auto t = (k_-r.origin().y()) / r.direction().y();
     if (t < t_min || t > t_max)
         return false;
@@ -29,14 +29,14 @@ bool xz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) con
     rec.u_ = (x-x0_)/(x1_-x0_);
     rec.v_ = (z-z0_)/(z1_-z0_);
     rec.t_ = t;
-    auto outward_normal = vec3(0, 1, 0);
+    auto outward_normal = Vec3(0, 1, 0);
     rec.set_face_normal(r, outward_normal);
     rec.mat_ptr_ = mp_;
     rec.p_ = r.at(t);
     return true;
 }
 
-bool yz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+bool YZRect::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const {
     auto t = (k_-r.origin().x()) / r.direction().x();
     if (t < t_min || t > t_max)
         return false;
@@ -47,7 +47,7 @@ bool yz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) con
     rec.u_ = (y-y0_)/(y1_-y0_);
     rec.v_ = (z-z0_)/(z1_-z0_);
     rec.t_ = t;
-    auto outward_normal = vec3(1, 0, 0);
+    auto outward_normal = Vec3(1, 0, 0);
     rec.set_face_normal(r, outward_normal);
     rec.mat_ptr_ = mp_;
     rec.p_ = r.at(t);

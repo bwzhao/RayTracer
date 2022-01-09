@@ -1,24 +1,24 @@
 #pragma once
 
-#include "rt_utils.h"
-#include "image_utils.h"
+#include "utils/rt_utils.h"
+#include "utils/image_utils.h"
 
-#include "perlin.h"
+#include "Perlin.h"
 
-class texture {
+class Texture {
 public:
     virtual color value(double u, double v, const point3& p) const = 0;
 };
 
-class solid_color : public texture {
+class SolidColor : public Texture {
 public:
-    solid_color() {}
-    solid_color(color c) : color_value_(c) {}
+    SolidColor() {}
+    SolidColor(color c) : color_value_(c) {}
 
-    solid_color(double red, double green, double blue)
-            : solid_color(color(red,green,blue)) {}
+    SolidColor(double red, double green, double blue)
+            : SolidColor(color(red, green, blue)) {}
 
-    virtual color value(double u, double v, const vec3& p) const override {
+    virtual color value(double u, double v, const Vec3& p) const override {
         return color_value_;
     }
 
@@ -26,15 +26,15 @@ private:
     color color_value_;
 };
 
-class checker_texture : public texture {
+class CheckerTexture : public Texture {
 public:
-    checker_texture() {}
+    CheckerTexture() {}
 
-    checker_texture(shared_ptr<texture> _even, shared_ptr<texture> _odd)
+    CheckerTexture(shared_ptr<Texture> _even, shared_ptr<Texture> _odd)
             : even_(_even), odd_(_odd) {}
 
-    checker_texture(color c1, color c2)
-            : even_(make_shared<solid_color>(c1)) , odd_(make_shared<solid_color>(c2)) {}
+    CheckerTexture(color c1, color c2)
+            : even_(make_shared<SolidColor>(c1)) , odd_(make_shared<SolidColor>(c2)) {}
 
     virtual color value(double u, double v, const point3& p) const override {
         auto sines = sin(10*p.x())*sin(10*p.y())*sin(10*p.z());
@@ -45,14 +45,14 @@ public:
     }
 
 public:
-    shared_ptr<texture> odd_;
-    shared_ptr<texture> even_;
+    shared_ptr<Texture> odd_;
+    shared_ptr<Texture> even_;
 };
 
-class noise_texture : public texture {
+class NoiseTexture : public Texture {
 public:
-    noise_texture() {}
-    noise_texture(double sc) : scale_(sc) {}
+    NoiseTexture() {}
+    NoiseTexture(double sc) : scale_(sc) {}
 
     virtual color value(double u, double v, const point3& p) const override {
 //        return color(1,1,1) * 0.5 * (1.0 + noise_.noise(scale_ * p_));
@@ -61,41 +61,41 @@ public:
     }
 
 public:
-    perlin noise_;
+    Perlin noise_;
     double scale_;
 };
 
-class image_texture : public texture {
+class ImageTexture : public Texture {
 public:
     const static int bytes_per_pixel = 3;
 
-    image_texture()
+    ImageTexture()
             : data_(nullptr), width_(0), height_(0), bytes_per_scanline_(0) {}
 
-    image_texture(const char* filename) {
+    ImageTexture(const char* filename) {
         auto components_per_pixel = bytes_per_pixel;
 
         data_ = stbi_load(
                 filename, &width_, &height_, &components_per_pixel, components_per_pixel);
 
         if (!data_) {
-            std::cerr << "ERROR: Could not load texture image file '" << filename << "'.\n";
+            std::cerr << "ERROR: Could not load Texture image file '" << filename << "'.\n";
             width_ = height_ = 0;
         }
 
         bytes_per_scanline_ = bytes_per_pixel * width_;
     }
 
-    ~image_texture() {
+    ~ImageTexture() {
         delete data_;
     }
 
-    virtual color value(double u, double v, const vec3& p) const override {
-        // If we have no texture data_, then return solid cyan as a debugging aid.
+    virtual color value(double u, double v, const Vec3& p) const override {
+        // If we have no Texture data_, then return solid cyan as a debugging aid.
         if (data_ == nullptr)
             return color(0,1,1);
 
-        // Clamp input texture coordinates to [0,1] x [1,0]
+        // Clamp input Texture coordinates to [0,1] x [1,0]
         u = clamp(u, 0.0, 1.0);
         v = 1.0 - clamp(v, 0.0, 1.0);  // Flip V to image coordinates
 

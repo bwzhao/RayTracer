@@ -1,13 +1,13 @@
 #pragma once
 
-#include "rt_utils.h"
+#include "utils/rt_utils.h"
 
-class camera {
+class Camera {
 public:
-    camera(
+    Camera(
             point3 lookfrom,
             point3 lookat,
-            vec3   vup,
+            Vec3   vup,
             double vfov, // vertical field-of-view in degrees
             double aspect_ratio,
             double aperture,
@@ -35,11 +35,11 @@ public:
         time1_ = time1;
     }
 
-    ray get_ray(double s, double t) const {
-        vec3 rd = lens_radius_ * random_in_unit_disk();
-        vec3 offset = u_ * rd.x() + v_ * rd.y();
+    Ray get_ray(double s, double t) const {
+        Vec3 rd = lens_radius_ * random_in_unit_disk();
+        Vec3 offset = u_ * rd.x() + v_ * rd.y();
 
-        return ray(
+        return Ray(
                 origin_ + offset,
                 lower_left_corner_ + s*horizontal_ + t*vertical_ - origin_ - offset,
                 random_double(time0_, time1_)
@@ -49,9 +49,9 @@ public:
 private:
     point3 origin_;
     point3 lower_left_corner_;
-    vec3 horizontal_;
-    vec3 vertical_;
-    vec3 u_, v_, w_;
+    Vec3 horizontal_;
+    Vec3 vertical_;
+    Vec3 u_, v_, w_;
     double lens_radius_;
     double time0_, time1_;
 };

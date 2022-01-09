@@ -1,45 +1,45 @@
 #pragma once
 
-#include "rt_utils.h"
+#include "utils/rt_utils.h"
 
-#include "hittable.h"
-#include "material.h"
-#include "texture.h"
+#include "geometry/Hittable.h"
+#include "Material.h"
+#include "Texture.h"
 
-//class constant_medium : public hittable {
+//class constant_medium : public Hittable {
 //public:
-//    constant_medium(shared_ptr<hittable> b, double d, shared_ptr<texture> a)
+//    constant_medium(shared_ptr<Hittable> b, double d, shared_ptr<Texture> a)
 //            : boundary_(b),
 //              neg_inv_density_(-1 / d),
 //              phase_function_(make_shared<isotropic>(a))
 //    {}
 //
-//    constant_medium(shared_ptr<hittable> b, double d, color c)
+//    constant_medium(shared_ptr<Hittable> b, double d, color c)
 //            : boundary_(b),
 //              neg_inv_density_(-1 / d),
 //              phase_function_(make_shared<isotropic>(c))
 //    {}
 //
 //    virtual bool hit(
-//            const ray& r, double t_min, double t_max, hit_record& rec) const override;
+//            const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
 //
-//    virtual bool bounding_box(double time0, double time1, aabb& output_box) const override {
+//    virtual bool bounding_box(double time0, double time1, AABB& output_box) const override {
 //        return boundary_->bounding_box(time0, time1, output_box);
 //    }
 //
 //public:
-//    shared_ptr<hittable> boundary_;
+//    shared_ptr<Hittable> boundary_;
 //    shared_ptr<material> phase_function_;
 //    double neg_inv_density_;
 //};
 
 
-//bool constant_medium::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+//bool constant_medium::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const {
 //    // Print occasional samples when debugging. To enable, set enableDebug true.
 //    const bool enableDebug = false;
 //    const bool debugging = enableDebug && random_double() < 0.00001;
 //
-//    hit_record rec1, rec2;
+//    HitRecord rec1, rec2;
 //
 //    if (!boundary_->hit(r, -infinity, infinity, rec1))
 //        return false;
@@ -74,7 +74,7 @@
 //                  << "rec.p_ = " <<  rec.p_ << '\n';
 //    }
 //
-//    rec.normal_ = vec3(1,0,0);  // arbitrary
+//    rec.normal_ = Vec3(1,0,0);  // arbitrary
 //    rec.front_face_ = true;     // also arbitrary
 //    rec.mat_ptr_ = phase_function_;
 //

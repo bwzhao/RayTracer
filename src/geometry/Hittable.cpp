@@ -1,7 +1,7 @@
-#include "hittable.h"
+#include "geometry/Hittable.h"
 
-bool translate::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
-    ray moved_r(r.origin() - offset_, r.direction(), r.time());
+bool translate::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const {
+    Ray moved_r(r.origin() - offset_, r.direction(), r.time());
     if (!ptr_->hit(moved_r, t_min, t_max, rec))
         return false;
 
@@ -11,18 +11,18 @@ bool translate::hit(const ray& r, double t_min, double t_max, hit_record& rec) c
     return true;
 }
 
-bool translate::bounding_box(double time0, double time1, aabb& output_box) const {
+bool translate::bounding_box(double time0, double time1, AABB& output_box) const {
     if (!ptr_->bounding_box(time0, time1, output_box))
         return false;
 
-    output_box = aabb(
+    output_box = AABB(
             output_box.min() + offset_,
             output_box.max() + offset_);
 
     return true;
 }
 
-rotate_y::rotate_y(shared_ptr<hittable> p, double angle) : ptr_(p) {
+rotate_y::rotate_y(shared_ptr<Hittable> p, double angle) : ptr_(p) {
     auto radians = degrees_to_radians(angle);
     sin_theta_ = sin(radians);
     cos_theta_ = cos(radians);
@@ -41,7 +41,7 @@ rotate_y::rotate_y(shared_ptr<hittable> p, double angle) : ptr_(p) {
                 auto newx =  cos_theta_*x + sin_theta_*z;
                 auto newz = -sin_theta_*x + cos_theta_*z;
 
-                vec3 tester(newx, y, newz);
+                Vec3 tester(newx, y, newz);
 
                 for (int c = 0; c < 3; c++) {
                     min[c] = fmin(min[c], tester[c]);
@@ -51,10 +51,10 @@ rotate_y::rotate_y(shared_ptr<hittable> p, double angle) : ptr_(p) {
         }
     }
 
-    bbox_ = aabb(min, max);
+    bbox_ = AABB(min, max);
 }
 
-bool rotate_y::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+bool rotate_y::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const {
     auto origin = r.origin();
     auto direction = r.direction();
 
@@ -64,7 +64,7 @@ bool rotate_y::hit(const ray& r, double t_min, double t_max, hit_record& rec) co
     direction[0] = cos_theta_*r.direction()[0] - sin_theta_*r.direction()[2];
     direction[2] = sin_theta_*r.direction()[0] + cos_theta_*r.direction()[2];
 
-    ray rotated_r(origin, direction, r.time());
+    Ray rotated_r(origin, direction, r.time());
 
     if (!ptr_->hit(rotated_r, t_min, t_max, rec))
         return false;

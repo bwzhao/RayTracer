@@ -1,26 +1,26 @@
 #pragma once
 
-#include "rt_utils.h"
-#include "vec3.h"
-#include "ray.h"
+#include "utils/rt_utils.h"
+#include "Vec3.h"
+#include "Ray.h"
 
-class aabb {
+class AABB {
 public:
-    aabb() {}
-    aabb(const point3& a, const point3& b) { minimum_ = a; maximum_ = b;}
+    AABB() {}
+    AABB(const point3& a, const point3& b) { minimum_ = a; maximum_ = b;}
 
     point3 min() const {return minimum_; }
     point3 max() const {return maximum_; }
 
-    bool hit(const ray& r, double t_min, double t_max) const;
-    static aabb surrounding_box(aabb box0, aabb box1);
+    bool hit(const Ray& r, double t_min, double t_max) const;
+    static AABB surrounding_box(AABB box0, AABB box1);
 
     point3 minimum_;
     point3 maximum_;
 };
 
 
-inline bool aabb::hit(const ray& r, double t_min, double t_max) const {
+inline bool AABB::hit(const Ray& r, double t_min, double t_max) const {
     for (int a = 0; a < 3; a++) {
         auto invD = 1.0f / r.direction()[a];
         auto t0 = (min()[a] - r.origin()[a]) * invD;

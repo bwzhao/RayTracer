@@ -1,11 +1,11 @@
-#include "bvh.h"
+#include "Bvh.h"
 
-bool bvh_node::bounding_box(double time0, double time1, aabb& output_box) const {
+bool BvhNode::bounding_box(double time0, double time1, AABB& output_box) const {
     output_box = box_;
     return true;
 }
 
-bool bvh_node::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+bool BvhNode::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const {
     if (!box_.hit(r, t_min, t_max))
         return false;
 
@@ -15,8 +15,8 @@ bool bvh_node::hit(const ray& r, double t_min, double t_max, hit_record& rec) co
     return hit_left || hit_right;
 }
 
-bvh_node::bvh_node(
-        const std::vector<shared_ptr<hittable>>& src_objects,
+BvhNode::BvhNode(
+        const std::vector<shared_ptr<Hittable>>& src_objects,
         size_t start, size_t end, double time0, double time1
 ) {
     auto objects = src_objects; // Create a modifiable array of the source scene objects
@@ -42,28 +42,28 @@ bvh_node::bvh_node(
         std::sort(objects.begin() + start, objects.begin() + end, comparator);
 
         auto mid = start + object_span/2;
-        left_ = make_shared<bvh_node>(objects, start, mid, time0, time1);
-        right_ = make_shared<bvh_node>(objects, mid, end, time0, time1);
+        left_ = make_shared<BvhNode>(objects, start, mid, time0, time1);
+        right_ = make_shared<BvhNode>(objects, mid, end, time0, time1);
     }
 
-    aabb box_left, box_right;
+    AABB box_left, box_right;
 
     if (  !left_->bounding_box (time0, time1, box_left)
           || !right_->bounding_box(time0, time1, box_right)
             )
-        std::cerr << "No bounding box in bvh_node constructor.\n";
+        std::cerr << "No bounding box in BvhNode constructor.\n";
 
-    box_ = aabb::surrounding_box(box_left, box_right);
+    box_ = AABB::surrounding_box(box_left, box_right);
 }
 
-bool box_x_compare (const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+bool box_x_compare (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
     return box_compare(a, b, 0);
 }
 
-bool box_y_compare (const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+bool box_y_compare (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
     return box_compare(a, b, 1);
 }
 
-bool box_z_compare (const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+bool box_z_compare (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
     return box_compare(a, b, 2);
 }

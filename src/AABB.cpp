@@ -1,6 +1,6 @@
-#include "aabb.h"
+#include "AABB.h"
 
-aabb aabb::surrounding_box(aabb box0, aabb box1) {
+AABB AABB::surrounding_box(AABB box0, AABB box1) {
     point3 small(fmin(box0.min().x(), box1.min().x()),
                  fmin(box0.min().y(), box1.min().y()),
                  fmin(box0.min().z(), box1.min().z()));
@@ -9,5 +9,5 @@ aabb aabb::surrounding_box(aabb box0, aabb box1) {
                fmax(box0.max().y(), box1.max().y()),
                fmax(box0.max().z(), box1.max().z()));
 
-    return aabb(small, big);
+    return AABB(small, big);
 }
