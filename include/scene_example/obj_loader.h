@@ -12,4 +12,6 @@
 #include "Bvh.h"
 #include "geometry/Triangle.h"
 
-ObjectList cornell_box();
+#include <iostream>
+
+ObjectList load_obj();

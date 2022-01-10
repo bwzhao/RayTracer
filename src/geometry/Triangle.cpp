@@ -1,10 +1,15 @@
 #include "geometry/Triangle.h"
 
 
-Triangle::Triangle(Point3 v0, Point3 v1, Point3 v2, shared_ptr<Material> m, Vec3 t0, Vec3 t1, Vec3 t2) :
+Triangle::Triangle(Point3 v0, Point3 v1, Point3 v2, shared_ptr<Material> m,
+                   Vec3 n0, Vec3 n1, Vec3 n2,
+                   Vec3 t0, Vec3 t1, Vec3 t2) :
 v0_(v0),
 v1_(v1),
 v2_(v2),
+n0_(n0),
+n1_(n1),
+n2_(n2),
 t0_(t0),
 t1_(t1),
 t2_(t2),
@@ -12,11 +17,11 @@ mat_ptr_(m)
 {
     e1_ = v1 - v0;
     e2_ = v2 - v0;
-    normal_ = unit_vector(cross(e1_, e2_));
+//    normal_ = (n0 + n1 + n2) / 3.;
 }
 
 bool Triangle::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const {
-    if (dot(r.direction(), normal_) > 0)
+    if (dot(r.direction(), n0_) > 0 && dot(r.direction(), n1_) > 0 && dot(r.direction(), n2_) > 0)
         return false;
 
     double u, v, t_tmp = 0.;
@@ -42,10 +47,12 @@ bool Triangle::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) con
     if (t_tmp < t_min || t_max < t_tmp)
         return false;
 
+    auto tmp_uv = (1. - u - v) * t0_ + u * t1_ + v * t2_;
+    auto tmp_normal = unit_vector((1. - u - v) * n0_ + u * n1_ + v * n2_);
+
     rec.t_ = t_tmp;
     rec.p_ = r.at(rec.t_);
-    rec.set_face_normal(r, normal_);
-    auto tmp_uv = (1. - u - v) * t0_ + u * t1_ + v * t2_;
+    rec.set_face_normal(r, tmp_normal);
     rec.u_ = tmp_uv[0];
     rec.v_ = tmp_uv[1];
     rec.mat_ptr_ = mat_ptr_;
@@ -57,8 +64,16 @@ bool Triangle::bounding_box(double time0, double time1, AABB& output_box) const 
     Vec3 mininum, maximum = Vec3();
     for (int idx = 0; idx != 3; ++idx) {
         auto minmax = std::minmax({v0_[idx], v1_[idx], v2_[idx]});
-        mininum[idx] = minmax.first;
-        maximum[idx] = minmax.second;
+        // Add padding
+        if (minmax.second - minmax.first < 0.0001){
+            mininum[idx] = minmax.first;
+            maximum[idx] = minmax.first + 0.0001;
+        }
+        else{
+            mininum[idx] = minmax.first;
+            maximum[idx] = minmax.second;
+        }
+
     }
 
     output_box = AABB(mininum, maximum);

@@ -7,11 +7,12 @@
 #include "geometry/aarect.h"
 #include "Scene.h"
 #include "scene_example/connell_box.h"
+#include "scene_example/obj_loader.h"
 
 int main(int argc, char **argv) {
     // Set up scene
     const auto aspect_ratio = 1.0 / 1.0;
-    const int image_width = 600;
+    const int image_width = 500;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 10;
     const int max_depth = 50;
@@ -29,13 +30,9 @@ int main(int argc, char **argv) {
     scene.set_camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, time0, time1);
 
     // World
-    auto world = cornell_box();
+    auto world = load_obj();
     shared_ptr<ObjectList> lights = make_shared<ObjectList>();
     lights->add(make_shared<XZRect>(213, 343, 227, 332, 554, shared_ptr<Material>()));
-    lights->add(make_shared<Sphere>(Point3(190, 90, 190), 90, shared_ptr<Material>()));
-    lights->add(make_shared<Triangle>(Vec3(0, 0, 0),
-                                      Vec3(0, 100, 0),
-                                      Vec3(0, 100, 100), shared_ptr<Material>()));
 
     scene.set_world(world);
     scene.set_lights(lights);
