@@ -1,27 +1,29 @@
-#include "scene_example/obj_loader.h"
+#include "utils/obj_loader.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 // Optional. define TINYOBJLOADER_USE_MAPBOX_EARCUT gives robust trinagulation. Requires C++11
 #define TINYOBJLOADER_USE_MAPBOX_EARCUT
 #include "tiny_obj_loader.h"
 
-ObjectList load_obj() {
+ObjectList load_obj(std::string obj_file_path, double scale_x, double scale_y, double scale_z,
+                    std::shared_ptr<Material> material) {
     ObjectList boxes1;
 
-    auto texture = make_shared<ImageTexture>("../textures/viking_room.png");
-    auto matereial = make_shared<Lambertian>(texture);
+    if (material == nullptr) {
+        auto texture = make_shared<ImageTexture>("../textures/viking_room.png");
+        material = make_shared<Lambertian>(texture);
+    }
+
     auto light = make_shared<DiffuseLight>(Color(15, 15, 15));
     auto green = make_shared<Lambertian>(Color(.12, .45, .15));
     auto red   = make_shared<Lambertian>(Color(.65, .05, .05));
     auto white = make_shared<Lambertian>(Color(.73, .73, .73));
 
-    double scale_x = 165, scale_y = 355, scale_z = 165;
-
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
-    std::string inputfile = "../models/cube.obj";
+    std::string inputfile = obj_file_path;
 
     if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str())) {
         throw std::runtime_error(warn + err);
@@ -72,7 +74,7 @@ ObjectList load_obj() {
             index_offset += fv;
 
 // per-face material
-            shapes[s].mesh.material_ids[f];
+//            shapes[s].mesh.material_ids[f];
 
             if (!flag_normal) {
                 normal_corr[0] = unit_vector(cross(vertex_corr[1] - vertex_corr[0], vertex_corr[2] - vertex_corr[0]));
@@ -87,7 +89,7 @@ ObjectList load_obj() {
 
             boxes1.add(make_shared<Triangle>(vertex_corr[0],
                                               vertex_corr[1],
-                                              vertex_corr[2], white,
+                                              vertex_corr[2], material,
                                               normal_corr[0],
                                               normal_corr[1],
                                               normal_corr[2],
@@ -97,21 +99,5 @@ ObjectList load_obj() {
         }
     }
 
-    ObjectList objects;
-    shared_ptr<Object> box1 = std::make_shared<ObjectList>(boxes1);
-    box1 = make_shared<rotate_y>(box1, 15);
-    box1 = make_shared<translate>(box1, Vec3(265,0,295));
-    objects.add(make_shared<BvhNode>(box1, 0, 1));
-
-    objects.add(make_shared<flip_face>(make_shared<XZRect>(213, 343, 227, 332, 554, light)));
-
-    objects.add(make_shared<YZRect>(0, 555, 0, 555, 555, green));
-    objects.add(make_shared<YZRect>(0, 555, 0, 555, 0, red));
-    objects.add(make_shared<XZRect>(0, 555, 0, 555, 555, white));
-    objects.add(make_shared<XZRect>(0, 555, 0, 555, 0, white));
-    objects.add(make_shared<XYRect>(0, 555, 0, 555, 555, white));
-
-
-
-    return objects;
+    return boxes1;
 }

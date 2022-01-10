@@ -14,4 +14,5 @@
 
 #include <iostream>
 
-ObjectList load_obj();
+ObjectList load_obj(std::string obj_file_path, double scale_x, double scale_y, double scale_z,
+                    std::shared_ptr<Material> material = nullptr);

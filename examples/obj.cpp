@@ -7,7 +7,7 @@
 #include "geometry/aarect.h"
 #include "Scene.h"
 #include "scene_example/connell_box.h"
-#include "scene_example/obj_loader.h"
+#include "utils/obj_loader.h"
 
 int main(int argc, char **argv) {
     // Set up scene
@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     scene.set_camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, time0, time1);
 
     // World
-    auto world = load_obj();
+    auto world = cornell_box_obj();
     shared_ptr<ObjectList> lights = make_shared<ObjectList>();
     lights->add(make_shared<XZRect>(213, 343, 227, 332, 554, shared_ptr<Material>()));
 

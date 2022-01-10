@@ -1,7 +1,8 @@
 #include "scene_example/connell_box.h"
 #include "Texture.h"
+#include "utils/obj_loader.h"
 
-ObjectList cornell_box() {
+ObjectList corneel_frame() {
     ObjectList objects;
 
     auto red   = make_shared<Lambertian>(Color(.65, .05, .05));
@@ -68,10 +69,36 @@ ObjectList cornell_box() {
                                       Vec3(1, 0, 0),
                                       Vec3(1, 1, 0)
     ));
+    return objects;
+}
 
+ObjectList cornell_box() {
+    ObjectList objects;
+
+    ObjectList box_frame = std::move(corneel_frame());
+    objects.add(std::make_shared<ObjectList>(box_frame));
 
     shared_ptr<Material> aluminum = make_shared<Metal>(Color(0.8, 0.85, 0.88), 0.0);
     shared_ptr<Object> box1 = make_shared<Box>(Point3(0, 0, 0), Point3(165, 330, 165), aluminum);
+    box1 = make_shared<rotate_y>(box1, 15);
+    box1 = make_shared<translate>(box1, Vec3(265,0,295));
+    objects.add(box1);
+
+    auto glass = make_shared<Dielectric>(1.5);
+    objects.add(make_shared<Sphere>(Point3(190, 90, 190), 90 , glass));
+
+    return objects;
+}
+
+ObjectList cornell_box_obj() {
+    ObjectList objects;
+
+    ObjectList box_frame = std::move(corneel_frame());
+    objects.add(std::make_shared<ObjectList>(box_frame));
+
+    shared_ptr<Material> aluminum = make_shared<Metal>(Color(0.8, 0.85, 0.88), 0.0);
+    ObjectList box_obj = load_obj("../models/cube.obj", 165, 330, 165, aluminum);
+    shared_ptr<Object> box1 = make_shared<ObjectList>(box_obj);
     box1 = make_shared<rotate_y>(box1, 15);
     box1 = make_shared<translate>(box1, Vec3(265,0,295));
     objects.add(box1);
