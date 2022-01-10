@@ -4,9 +4,9 @@
 
 class Camera {
 public:
-    Camera(
-            point3 lookfrom,
-            point3 lookat,
+    void set_camera(
+            Point3 lookfrom,
+            Point3 lookat,
             Vec3   vup,
             double vfov, // vertical field-of-view in degrees
             double aspect_ratio,
@@ -47,8 +47,8 @@ public:
     }
 
 private:
-    point3 origin_;
-    point3 lower_left_corner_;
+    Point3 origin_;
+    Point3 lower_left_corner_;
     Vec3 horizontal_;
     Vec3 vertical_;
     Vec3 u_, v_, w_;

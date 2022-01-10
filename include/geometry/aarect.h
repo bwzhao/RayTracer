@@ -17,7 +17,7 @@ public:
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const override {
         // The bounding box must have non-zero width in each dimension, so pad the Z
         // dimension a small amount.
-        output_box = AABB(point3(x0_, y0_, k_ - 0.0001), point3(x1_, y1_, k_ + 0.0001));
+        output_box = AABB(Point3(x0_, y0_, k_ - 0.0001), Point3(x1_, y1_, k_ + 0.0001));
         return true;
     }
 
@@ -39,11 +39,11 @@ public:
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const override {
         // The bounding box must have non-zero width in each dimension, so pad the Y
         // dimension a small amount.
-        output_box = AABB(point3(x0_, k_ - 0.0001, z0_), point3(x1_, k_ + 0.0001, z1_));
+        output_box = AABB(Point3(x0_, k_ - 0.0001, z0_), Point3(x1_, k_ + 0.0001, z1_));
         return true;
     }
 
-    virtual double pdf_value(const point3& origin, const Vec3& v) const override {
+    virtual double pdf_value(const Point3& origin, const Vec3& v) const override {
         HitRecord rec;
         if (!this->hit(Ray(origin, v), 0.001, infinity, rec))
             return 0;
@@ -55,8 +55,8 @@ public:
         return distance_squared / (cosine * area);
     }
 
-    virtual Vec3 random(const point3& origin) const override {
-        auto random_point = point3(random_double(x0_, x1_), k_, random_double(z0_, z1_));
+    virtual Vec3 random(const Point3& origin) const override {
+        auto random_point = Point3(random_double(x0_, x1_), k_, random_double(z0_, z1_));
         return random_point - origin;
     }
 
@@ -78,7 +78,7 @@ public:
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const override {
         // The bounding box must have non-zero width in each dimension, so pad the X
         // dimension a small amount.
-        output_box = AABB(point3(k_ - 0.0001, y0_, z0_), point3(k_ + 0.0001, y1_, z1_));
+        output_box = AABB(Point3(k_ - 0.0001, y0_, z0_), Point3(k_ + 0.0001, y1_, z1_));
         return true;
     }
 

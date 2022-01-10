@@ -14,7 +14,7 @@
 //              phase_function_(make_shared<isotropic>(a))
 //    {}
 //
-//    constant_medium(shared_ptr<Hittable> b, double d, color c)
+//    constant_medium(shared_ptr<Hittable> b, double d, Color c)
 //            : boundary_(b),
 //              neg_inv_density_(-1 / d),
 //              phase_function_(make_shared<isotropic>(c))

@@ -28,8 +28,8 @@ rotate_y::rotate_y(shared_ptr<Hittable> p, double angle) : ptr_(p) {
     cos_theta_ = cos(radians);
     hasbox_ = ptr_->bounding_box(0, 1, bbox_);
 
-    point3 min( infinity,  infinity,  infinity);
-    point3 max(-infinity, -infinity, -infinity);
+    Point3 min(infinity, infinity, infinity);
+    Point3 max(-infinity, -infinity, -infinity);
 
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {

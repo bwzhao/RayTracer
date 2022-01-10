@@ -21,7 +21,7 @@ public:
             const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
     virtual bool bounding_box(
             double time0, double time1, AABB& output_box) const override;
-    double pdf_value(const point3& o, const Vec3& v) const override;
+    double pdf_value(const Point3& o, const Vec3& v) const override;
     Vec3 random(const Vec3& o) const override;
 
 public:

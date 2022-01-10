@@ -63,8 +63,8 @@ public:
 };
 
 // Type aliases for Vec3
-using point3 = Vec3;   // 3D point
-using color = Vec3;    // RGB color
+using Point3 = Vec3;   // 3D point
+using Color = Vec3;    // RGB Color
 
 
 // Vec3 Utility Functions

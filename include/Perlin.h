@@ -22,7 +22,7 @@ public:
         delete[] perm_z_;
     }
 
-    double noise(const point3& p) const {
+    double noise(const Point3& p) const {
         auto u = p.x() - floor(p.x());
         auto v = p.y() - floor(p.y());
         auto w = p.z() - floor(p.z());
@@ -43,7 +43,7 @@ public:
         return perlin_interp(c, u, v, w);
     }
 
-    double turb(const point3& p, int depth=7) const {
+    double turb(const Point3& p, int depth=7) const {
         auto accum = 0.0;
         auto temp_p = p;
         auto weight = 1.0;

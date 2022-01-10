@@ -39,7 +39,7 @@ public:
 
 class HittablePdf : public Pdf {
 public:
-    HittablePdf(shared_ptr<Hittable> p, const point3& origin) : ptr_(p), o_(origin) {}
+    HittablePdf(shared_ptr<Hittable> p, const Point3& origin) : ptr_(p), o_(origin) {}
 
     virtual double value(const Vec3& direction) const override {
         return ptr_->pdf_value(o_, direction);
@@ -50,7 +50,7 @@ public:
     }
 
 public:
-    point3 o_;
+    Point3 o_;
     shared_ptr<Hittable> ptr_;
 };
 

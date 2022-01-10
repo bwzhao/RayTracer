@@ -6,7 +6,7 @@
 class Material;
 
 struct HitRecord {
-    point3 p_;
+    Point3 p_;
     Vec3 normal_;
     std::shared_ptr<Material> mat_ptr_;
     double t_;
@@ -24,7 +24,7 @@ class Hittable {
 public:
     virtual bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const = 0;
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const = 0;
-    virtual double pdf_value(const point3& o, const Vec3& v) const {
+    virtual double pdf_value(const Point3& o, const Vec3& v) const {
         return 0.0;
     }
 

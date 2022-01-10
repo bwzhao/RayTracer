@@ -8,24 +8,24 @@
 class Sphere : public Hittable {
 public:
     Sphere() {}
-    Sphere(point3 cen, double r, shared_ptr<Material> m)
+    Sphere(Point3 cen, double r, shared_ptr<Material> m)
             : center_(cen), radius_(r), mat_ptr_(m) {};
 
     virtual bool hit(
             const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const override;
 
-    virtual double pdf_value(const point3& o, const Vec3& v) const override;
-    virtual Vec3 random(const point3& o) const override;
+    virtual double pdf_value(const Point3& o, const Vec3& v) const override;
+    virtual Vec3 random(const Point3& o) const override;
 
 
 public:
-    point3 center_;
+    Point3 center_;
     double radius_;
     shared_ptr<Material> mat_ptr_;
 
 private:
-    static void get_sphere_uv(const point3& p, double& u, double& v) {
+    static void get_sphere_uv(const Point3& p, double& u, double& v) {
         // p_: a given point on the sphere of radius one, centered at the origin.
         // u: returned value [0,1] of angle around the Y axis_ from X=-1.
         // v: returned value [0,1] of angle from Y=-1 to Y=+1.

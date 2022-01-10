@@ -35,7 +35,7 @@ bool Sphere::bounding_box(double time0, double time1, AABB& output_box) const {
     return true;
 }
 
-double Sphere::pdf_value(const point3& o, const Vec3& v) const {
+double Sphere::pdf_value(const Point3& o, const Vec3& v) const {
     HitRecord rec;
     if (!this->hit(Ray(o, v), 0.001, infinity, rec))
         return 0;
@@ -46,7 +46,7 @@ double Sphere::pdf_value(const point3& o, const Vec3& v) const {
     return  1 / solid_angle;
 }
 
-Vec3 Sphere::random(const point3& o) const {
+Vec3 Sphere::random(const Point3& o) const {
     Vec3 direction = center_ - o;
     auto distance_squared = direction.length_squared();
     Onb uvw;
