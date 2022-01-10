@@ -20,7 +20,7 @@ struct HitRecord {
     }
 };
 
-class Hittable {
+class Object {
 public:
     virtual bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const = 0;
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const = 0;
@@ -34,9 +34,9 @@ public:
 };
 
 
-class translate : public Hittable {
+class translate : public Object {
 public:
-    translate(shared_ptr<Hittable> p, const Vec3& displacement)
+    translate(shared_ptr<Object> p, const Vec3& displacement)
             : ptr_(p), offset_(displacement) {}
 
     virtual bool hit(
@@ -45,13 +45,13 @@ public:
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const override;
 
 public:
-    shared_ptr<Hittable> ptr_;
+    shared_ptr<Object> ptr_;
     Vec3 offset_;
 };
 
-class rotate_y : public Hittable {
+class rotate_y : public Object {
 public:
-    rotate_y(shared_ptr<Hittable> p, double angle);
+    rotate_y(shared_ptr<Object> p, double angle);
 
     virtual bool hit(
             const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
@@ -62,16 +62,16 @@ public:
     }
 
 public:
-    shared_ptr<Hittable> ptr_;
+    shared_ptr<Object> ptr_;
     double sin_theta_;
     double cos_theta_;
     bool hasbox_;
     AABB bbox_;
 };
 
-class flip_face : public Hittable {
+class flip_face : public Object {
 public:
-    flip_face(shared_ptr<Hittable> p) : ptr(p) {}
+    flip_face(shared_ptr<Object> p) : ptr(p) {}
 
     virtual bool hit(
             const Ray& r, double t_min, double t_max, HitRecord& rec) const override {
@@ -88,5 +88,5 @@ public:
     }
 
 public:
-    shared_ptr<Hittable> ptr;
+    shared_ptr<Object> ptr;
 };

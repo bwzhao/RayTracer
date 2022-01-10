@@ -37,9 +37,9 @@ public:
     Onb uvw;
 };
 
-class HittablePdf : public Pdf {
+class ObjectPdf : public Pdf {
 public:
-    HittablePdf(shared_ptr<Hittable> p, const Point3& origin) : ptr_(p), o_(origin) {}
+    ObjectPdf(shared_ptr<Object> p, const Point3& origin) : ptr_(p), o_(origin) {}
 
     virtual double value(const Vec3& direction) const override {
         return ptr_->pdf_value(o_, direction);
@@ -51,7 +51,7 @@ public:
 
 public:
     Point3 o_;
-    shared_ptr<Hittable> ptr_;
+    shared_ptr<Object> ptr_;
 };
 
 class MixturePdf : public Pdf {

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "geometry/Hittable.h"
+#include "geometry/Object.h"
 #include "Vec3.h"
 #include "Onb.h"
 #include "Pdf.h"
 
-class Sphere : public Hittable {
+class Sphere : public Object {
 public:
     Sphere() {}
     Sphere(Point3 cen, double r, shared_ptr<Material> m)

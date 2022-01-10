@@ -3,11 +3,11 @@
 #include "utils/rt_utils.h"
 
 #include "aarect.h"
-#include "geometry/Hittable.h"
-#include "HittableList.h"
+#include "geometry/Object.h"
+#include "ObjectList.h"
 
 
-class Box : public Hittable  {
+class Box : public Object  {
 public:
     Box() {}
     Box(const Point3& p0, const Point3& p1, shared_ptr<Material> ptr);
@@ -22,5 +22,5 @@ public:
 public:
     Point3 box_min_;
     Point3 box_max_;
-    HittableList sides_;
+    ObjectList sides_;
 };

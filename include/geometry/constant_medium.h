@@ -2,19 +2,19 @@
 
 #include "utils/rt_utils.h"
 
-#include "geometry/Hittable.h"
+#include "geometry/Object.h"
 #include "Material.h"
 #include "Texture.h"
 
-//class constant_medium : public Hittable {
+//class constant_medium : public Object {
 //public:
-//    constant_medium(shared_ptr<Hittable> b, double d, shared_ptr<Texture> a)
+//    constant_medium(shared_ptr<Object> b, double d, shared_ptr<Texture> a)
 //            : boundary_(b),
 //              neg_inv_density_(-1 / d),
 //              phase_function_(make_shared<isotropic>(a))
 //    {}
 //
-//    constant_medium(shared_ptr<Hittable> b, double d, Color c)
+//    constant_medium(shared_ptr<Object> b, double d, Color c)
 //            : boundary_(b),
 //              neg_inv_density_(-1 / d),
 //              phase_function_(make_shared<isotropic>(c))
@@ -28,7 +28,7 @@
 //    }
 //
 //public:
-//    shared_ptr<Hittable> boundary_;
+//    shared_ptr<Object> boundary_;
 //    shared_ptr<material> phase_function_;
 //    double neg_inv_density_;
 //};

@@ -2,10 +2,10 @@
 
 #include "utils/rt_utils.h"
 
-#include "geometry/Hittable.h"
+#include "geometry/Object.h"
 #include "AABB.h"
 
-class MovingSphere : public Hittable {
+class MovingSphere : public Object {
 public:
     MovingSphere() {}
     MovingSphere(

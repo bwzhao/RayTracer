@@ -16,7 +16,7 @@ bool BvhNode::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) cons
 }
 
 BvhNode::BvhNode(
-        const std::vector<shared_ptr<Hittable>>& src_objects,
+        const std::vector<shared_ptr<Object>>& src_objects,
         size_t start, size_t end, double time0, double time1
 ) {
     auto objects = src_objects; // Create a modifiable array of the source scene objects
@@ -56,14 +56,14 @@ BvhNode::BvhNode(
     box_ = AABB::surrounding_box(box_left, box_right);
 }
 
-bool box_x_compare (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
+bool box_x_compare (const shared_ptr<Object> a, const shared_ptr<Object> b) {
     return box_compare(a, b, 0);
 }
 
-bool box_y_compare (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
+bool box_y_compare (const shared_ptr<Object> a, const shared_ptr<Object> b) {
     return box_compare(a, b, 1);
 }
 
-bool box_z_compare (const shared_ptr<Hittable> a, const shared_ptr<Hittable> b) {
+bool box_z_compare (const shared_ptr<Object> a, const shared_ptr<Object> b) {
     return box_compare(a, b, 2);
 }

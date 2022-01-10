@@ -1,7 +1,7 @@
 #include "Scene.h"
 
 #include "utils/io_utils.h"
-#include "geometry/HittableList.h"
+#include "geometry/ObjectList.h"
 #include "geometry/Sphere.h"
 #include "Camera.h"
 #include "Material.h"
@@ -45,8 +45,8 @@ void Scene::render() {
 Color Scene::ray_color(
         const Ray& r,
         const Color& background,
-        const Hittable& world,
-        shared_ptr<HittableList>& lights,
+        const Object& world,
+        shared_ptr<ObjectList>& lights,
         int depth
 ) {
     HitRecord rec;
@@ -69,7 +69,7 @@ Color Scene::ray_color(
                * ray_color(srec.specular_ray, background, world, lights, depth-1);
     }
 
-    auto light_ptr = make_shared<HittablePdf>(lights, rec.p_);
+    auto light_ptr = make_shared<ObjectPdf>(lights, rec.p_);
     MixturePdf p(light_ptr, srec.pdf_ptr);
 
     Ray scattered = Ray(rec.p_, p.generate(), r.time());

@@ -2,9 +2,9 @@
 
 #include "utils/rt_utils.h"
 
-#include "geometry/Hittable.h"
+#include "geometry/Object.h"
 
-class XYRect : public Hittable {
+class XYRect : public Object {
 public:
     XYRect() {}
 
@@ -26,7 +26,7 @@ public:
     double x0_, x1_, y0_, y1_, k_;
 };
 
-class XZRect : public Hittable {
+class XZRect : public Object {
 public:
     XZRect() {}
 
@@ -65,7 +65,7 @@ public:
     double x0_, x1_, z0_, z1_, k_;
 };
 
-class YZRect : public Hittable {
+class YZRect : public Object {
 public:
     YZRect() {}
 

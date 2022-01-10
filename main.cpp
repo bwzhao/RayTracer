@@ -1,7 +1,7 @@
 #include "utils/rt_utils.h"
 
 #include "utils/io_utils.h"
-#include "geometry/HittableList.h"
+#include "geometry/ObjectList.h"
 #include "geometry/Sphere.h"
 #include "Material.h"
 #include "geometry/aarect.h"
@@ -30,9 +30,12 @@ int main(int argc, char **argv) {
 
     // World
     auto world = cornell_box();
-    shared_ptr<HittableList> lights = make_shared<HittableList>();
+    shared_ptr<ObjectList> lights = make_shared<ObjectList>();
     lights->add(make_shared<XZRect>(213, 343, 227, 332, 554, shared_ptr<Material>()));
     lights->add(make_shared<Sphere>(Point3(190, 90, 190), 90, shared_ptr<Material>()));
+    lights->add(make_shared<Triangle>(Vec3(0, 0, 0),
+                                      Vec3(0, 100, 0),
+                                      Vec3(0, 100, 100), shared_ptr<Material>()));
 
     scene.set_world(world);
     scene.set_lights(lights);

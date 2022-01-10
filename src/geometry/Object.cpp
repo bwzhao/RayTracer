@@ -1,4 +1,4 @@
-#include "geometry/Hittable.h"
+#include "geometry/Object.h"
 
 bool translate::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const {
     Ray moved_r(r.origin() - offset_, r.direction(), r.time());
@@ -22,7 +22,7 @@ bool translate::bounding_box(double time0, double time1, AABB& output_box) const
     return true;
 }
 
-rotate_y::rotate_y(shared_ptr<Hittable> p, double angle) : ptr_(p) {
+rotate_y::rotate_y(shared_ptr<Object> p, double angle) : ptr_(p) {
     auto radians = degrees_to_radians(angle);
     sin_theta_ = sin(radians);
     cos_theta_ = cos(radians);
