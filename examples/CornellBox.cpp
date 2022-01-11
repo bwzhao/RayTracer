@@ -32,13 +32,13 @@ int main(int argc, char **argv) {
     // World
     auto world = cornell_box();
 //    auto world = load_obj();
-    shared_ptr<ObjectList> lights = make_shared<ObjectList>();
-    lights->add(make_shared<XZRect>(213, 343, 227, 332, 554, shared_ptr<Material>()));
-    lights->add(make_shared<Sphere>(Point3(190, 90, 190), 90, shared_ptr<Material>()));
-//    lights->add(make_shared<flip_face>(make_shared<XZRect>(-1, 1, -1, 1, 2, shared_ptr<Material>())));
+    shared_ptr<ObjectList> lights_ptr = make_shared<ObjectList>();
+    lights_ptr->add(make_shared<XZRect>(213, 343, 227, 332, 554, shared_ptr<Material>()));
+    lights_ptr->add(make_shared<Sphere>(Point3(190, 90, 190), 90, shared_ptr<Material>()));
+//    lights_ptr->add(make_shared<flip_face>(make_shared<XZRect>(-1, 1, -1, 1, 2, shared_ptr<Material>())));
 
     scene.set_world(world);
-    scene.set_lights(lights);
+    scene.set_lights(lights_ptr);
 
     // Render
     scene.render();

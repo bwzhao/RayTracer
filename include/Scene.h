@@ -13,8 +13,10 @@ private:
     int samples_per_pixel_;
     int max_depth_;
 
-    ObjectList world_;
-    shared_ptr<ObjectList> lights_;
+    Color background_;
+
+    shared_ptr<ObjectList> world_ptr_;
+    shared_ptr<ObjectList> lights_ptr_;
 
     Camera cam_;
 
@@ -27,13 +29,11 @@ public:
     void set_camera(Point3 lookfrom, Point3 lookat, Vec3 vup, double vfov, double aspect_ratio, double aperture,
                     double focus_dist, double time0, double time1);
 
-    void set_world(ObjectList world) { world_ = std::move(world);}
-    void set_lights(shared_ptr<ObjectList> lights) { lights_ = std::move(lights);}
+    void set_world(ObjectList &world) {world_ptr_ = std::make_shared<ObjectList>(world);}
+    void set_lights(shared_ptr<ObjectList> lights_ptr) {lights_ptr_ = std::move(lights_ptr);}
 
     void render();
-    static Color path_integrator(const Ray& r, const Color& background, const Object& world,
-                                 shared_ptr<ObjectList>& lights, int depth
-    );
+    Color path_integrator(const Ray& r, int depth);
 
     void set_pixel(int idx, Color pixel_color);
     void write_image(char *file_name);

@@ -87,3 +87,16 @@ inline Vec3 random_to_sphere(double radius, double distance_squared) {
 
     return Vec3(x, y, z);
 }
+
+class IsotropicPdf : public Pdf {
+public:
+    IsotropicPdf() {}
+
+    virtual double value(const Vec3& direction) const override {
+        return 0.25 / pi;
+    }
+
+    virtual Vec3 generate() const override {
+        return random_in_unit_sphere();
+    }
+};

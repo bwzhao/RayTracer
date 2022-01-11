@@ -147,21 +147,28 @@ public:
     shared_ptr<Texture> emit_;
 };
 
-//class isotropic : public material {
-//public:
-//    isotropic(Color c) : albedo_(make_shared<SolidColor>(c)) {}
-//    isotropic(shared_ptr<Texture> a) : albedo_(a) {}
-//
-//    virtual bool scatter(
-//            const Ray& r_in, const HitRecord& rec, Color& attenuation_, Ray& scattered, double& Pdf
-//    ) const override {
-//        scattered = Ray(rec.p_, random_in_unit_sphere(), r_in.time());
-//        attenuation_ = albedo_->value(rec.u_, rec.v_, rec.p_);
-//        return true;
-//    }
-//
-//public:
-//    shared_ptr<Texture> albedo_;
-//};
+class Isotropic : public Material {
+public:
+    Isotropic(Color c) : albedo_(make_shared<SolidColor>(c)) {}
+    Isotropic(shared_ptr<Texture> a) : albedo_(a) {}
+
+    virtual bool scatter(
+            const Ray& r_in, const HitRecord& rec, ScatterRecord& srec
+    ) const override {
+        srec.is_specular_ = false;
+        srec.attenuation_ = albedo_->value(rec.u_, rec.v_, rec.p_);
+        srec.pdf_ptr_ = static_cast<const shared_ptr<Pdf>>(new IsotropicPdf());
+        return true;
+    }
+
+    virtual double scattering_pdf(
+            const Ray& r_in, const HitRecord& rec, const Ray& scattered
+    ) const {
+        return 0.25 / pi;
+    }
+
+public:
+    shared_ptr<Texture> albedo_;
+};
 
 

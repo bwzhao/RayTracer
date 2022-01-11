@@ -99,11 +99,13 @@ ObjectList cornell_box_obj() {
     shared_ptr<Material> aluminum = make_shared<Metal>(Color(0.8, 0.85, 0.88), 0.0);
     shared_ptr<Material> white = make_shared<Lambertian>(Color(.73, .73, .73));
 
-    ObjectList box_obj = load_obj("../models/dodecahedron.obj", 100, 100, 100, aluminum);
-    shared_ptr<Object> box1 = make_shared<ObjectList>(box_obj);
-    box1 = make_shared<rotate_y>(box1, 15);
-    box1 = make_shared<translate>(box1, Vec3(400,150,300));
-    objects.add(box1);
+
+//    ObjectList box_obj = load_obj("../models/dodecahedron.obj", 100, 100, 100, aluminum);
+//    shared_ptr<Object> box1 = make_shared<ObjectList>(box_obj);
+//    box1 = make_shared<rotate_y>(box1, 15);
+//    box1 = make_shared<translate>(box1, Vec3(400,150,300));
+//    objects.add(box1);
+
 
 //    ObjectList box_obj = load_obj("../models/cube.obj", 165, 330, 165, aluminum);
 //    shared_ptr<Object> box1 = make_shared<ObjectList>(box_obj);
@@ -113,6 +115,7 @@ ObjectList cornell_box_obj() {
 
     auto glass = make_shared<Dielectric>(1.5);
     objects.add(make_shared<Sphere>(Point3(190, 90, 190), 90 , glass));
+
 
     return objects;
 }

@@ -8,7 +8,7 @@
 #include "geometry/MovingSphere.h"
 #include "geometry/aarect.h"
 #include "geometry/Box.h"
-#include "geometry/constant_medium.h"
+#include "geometry/ConstantMedium.h"
 #include "Bvh.h"
 #include "geometry/Triangle.h"
 
