@@ -4,6 +4,8 @@
 #include "Vec3.h"
 #include "utils/rt_utils.h"
 
+#include <algorithm>
+
 class Triangle: public Object {
 public:
     Point3 v0_, v1_, v2_; // vertices 0, 1, 2 , counter-clockwise order

@@ -50,7 +50,7 @@ ObjectList load_obj(std::string obj_file_path, double scale_x, double scale_y, d
                     tinyobj::real_t ny = attrib.normals[3*size_t(idx.normal_index)+1];
                     tinyobj::real_t nz = attrib.normals[3*size_t(idx.normal_index)+2];
 
-                    normal_corr[v] = unit_vector(Vec3(nx, ny, nz));
+                    normal_corr[v] = unit_vector(Vec3(nx * scale_x, ny * scale_y, nz * scale_z));
                 }
                 else{
                     flag_normal = false;

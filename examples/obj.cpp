@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     const auto aspect_ratio = 1.0 / 1.0;
     const int image_width = 500;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 10;
+    const int samples_per_pixel = 100;
     const int max_depth = 50;
 
     Point3 lookfrom(278, 278, -800);
@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
     auto world = cornell_box_obj();
     shared_ptr<ObjectList> lights = make_shared<ObjectList>();
     lights->add(make_shared<XZRect>(213, 343, 227, 332, 554, shared_ptr<Material>()));
+    lights->add(make_shared<Sphere>(Point3(190, 90, 190), 90 , shared_ptr<Material>()));
 
     scene.set_world(world);
     scene.set_lights(lights);
