@@ -5,14 +5,15 @@
 #include "Texture.h"
 #include "Onb.h"
 #include "Pdf.h"
+#include "Sampler.h"
 
 struct HitRecord;
 
 struct ScatterRecord {
-    Ray specular_ray;
-    bool is_specular;
-    Color attenuation;
-    shared_ptr<Pdf> pdf_ptr;
+    Ray specular_ray_;
+    bool is_specular_;
+    Color attenuation_;
+    shared_ptr<Pdf> pdf_ptr_;
 };
 
 class Material {
@@ -44,9 +45,9 @@ public:
     virtual bool scatter(
             const Ray& r_in, const HitRecord& rec, ScatterRecord& srec
     ) const override {
-        srec.is_specular = false;
-        srec.attenuation = albedo_->value(rec.u_, rec.v_, rec.p_);
-        srec.pdf_ptr = static_cast<const shared_ptr<Pdf>>(new CosinePdf(rec.normal_));
+        srec.is_specular_ = false;
+        srec.attenuation_ = albedo_->value(rec.u_, rec.v_, rec.p_);
+        srec.pdf_ptr_ = static_cast<const shared_ptr<Pdf>>(new CosinePdf(rec.normal_));
         return true;
     }
 
@@ -69,10 +70,10 @@ public:
             const Ray& r_in, const HitRecord& rec, ScatterRecord& srec
     ) const override {
         Vec3 reflected = reflect(unit_vector(r_in.direction()), rec.normal_);
-        srec.specular_ray = Ray(rec.p_, reflected + fuzz_ * random_in_unit_sphere());
-        srec.attenuation = albedo_;
-        srec.is_specular = true;
-        srec.pdf_ptr = 0;
+        srec.specular_ray_ = Ray(rec.p_, reflected + fuzz_ * random_in_unit_sphere());
+        srec.attenuation_ = albedo_;
+        srec.is_specular_ = true;
+        srec.pdf_ptr_ = 0;
         return true;
     }
 
@@ -88,9 +89,9 @@ public:
     virtual bool scatter(
             const Ray& r_in, const HitRecord& rec, ScatterRecord& srec
     ) const override {
-        srec.is_specular = true;
-        srec.pdf_ptr = nullptr;
-        srec.attenuation = Color(1.0, 1.0, 1.0);
+        srec.is_specular_ = true;
+        srec.pdf_ptr_ = nullptr;
+        srec.attenuation_ = Color(1.0, 1.0, 1.0);
         double refraction_ratio = rec.front_face_ ? (1.0/ir_) : ir_;
 
         Vec3 unit_direction = unit_vector(r_in.direction());
@@ -106,7 +107,7 @@ public:
         else
             direction = refract(unit_direction, rec.normal_, refraction_ratio);
 
-        srec.specular_ray = Ray(rec.p_, direction, r_in.time());
+        srec.specular_ray_ = Ray(rec.p_, direction, r_in.time());
         return true;
     }
 
@@ -152,10 +153,10 @@ public:
 //    isotropic(shared_ptr<Texture> a) : albedo_(a) {}
 //
 //    virtual bool scatter(
-//            const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& Pdf
+//            const Ray& r_in, const HitRecord& rec, Color& attenuation_, Ray& scattered, double& Pdf
 //    ) const override {
 //        scattered = Ray(rec.p_, random_in_unit_sphere(), r_in.time());
-//        attenuation = albedo_->value(rec.u_, rec.v_, rec.p_);
+//        attenuation_ = albedo_->value(rec.u_, rec.v_, rec.p_);
 //        return true;
 //    }
 //

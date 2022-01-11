@@ -24,7 +24,6 @@ void Scene::set_camera(Point3 lookfrom, Point3 lookat, Vec3 vup, double vfov, do
 
 void Scene::render() {
     Color background(0, 0, 0);
-//    std::cout << "P3\n" << image_width_ << ' ' << image_height_ << "\n255\n";
 
     for (int s = 0; s < samples_per_pixel_; ++s) {
         std::cout << "\rSamples remaining: " << samples_per_pixel_ - s - 1<< ' ' << std::flush;
@@ -34,7 +33,7 @@ void Scene::render() {
                 auto u = (i + random_double()) / (image_width_ - 1);
                 auto v = (j + random_double()) / (image_height_ - 1);
                 Ray r = cam_.get_ray(u, v);
-                auto pixel_color = ray_color(r, background, world_, lights_, max_depth_);
+                auto pixel_color = path_integrator(r, background, world_, lights_, max_depth_);
                 set_pixel(idx, pixel_color);
             }
         }
@@ -42,7 +41,7 @@ void Scene::render() {
     std::cout << "\nDone.\n";
 }
 
-Color Scene::ray_color(
+Color Scene::path_integrator(
         const Ray& r,
         const Color& background,
         const Object& world,
@@ -64,20 +63,20 @@ Color Scene::ray_color(
     if (!rec.mat_ptr_->scatter(r, rec, srec))
         return emitted;
 
-    if (srec.is_specular) {
-        return srec.attenuation
-               * ray_color(srec.specular_ray, background, world, lights, depth-1);
+    if (srec.is_specular_) {
+        return srec.attenuation_
+               * path_integrator(srec.specular_ray_, background, world, lights, depth - 1);
     }
 
     auto light_ptr = make_shared<ObjectPdf>(lights, rec.p_);
-    MixturePdf p(light_ptr, srec.pdf_ptr);
+    MixturePdf p(light_ptr, srec.pdf_ptr_);
 
     Ray scattered = Ray(rec.p_, p.generate(), r.time());
     auto pdf_val = p.value(scattered.direction());
 
     return emitted
-           + srec.attenuation * rec.mat_ptr_->scattering_pdf(r, rec, scattered)
-             * ray_color(scattered, background, world, lights, depth-1) / pdf_val;
+           + srec.attenuation_ * rec.mat_ptr_->scattering_pdf(r, rec, scattered)
+             * path_integrator(scattered, background, world, lights, depth - 1) / pdf_val;
 }
 
 void Scene::set_pixel(int idx, Color pixel_color) {

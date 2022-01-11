@@ -31,8 +31,8 @@ public:
     void set_lights(shared_ptr<ObjectList> lights) { lights_ = std::move(lights);}
 
     void render();
-    static Color ray_color(const Ray& r, const Color& background, const Object& world,
-                           shared_ptr<ObjectList>& lights, int depth
+    static Color path_integrator(const Ray& r, const Color& background, const Object& world,
+                                 shared_ptr<ObjectList>& lights, int depth
     );
 
     void set_pixel(int idx, Color pixel_color);

@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include "utils/rt_utils.h"
+#include "Sampler.h"
 
 class Vec3 {
 public:
@@ -112,14 +113,14 @@ inline Vec3 unit_vector(Vec3 v) {
     return v / v.length();
 }
 
+Vec3 reflect(const Vec3& v, const Vec3& n);
+
+Vec3 refract(const Vec3& uv, const Vec3& n, double etai_over_etat);
+
 Vec3 random_in_unit_sphere();
 
 Vec3 random_unit_vector();
 
 Vec3 random_in_hemisphere(const Vec3& normal);
-
-Vec3 reflect(const Vec3& v, const Vec3& n);
-
-Vec3 refract(const Vec3& uv, const Vec3& n, double etai_over_etat);
 
 Vec3 random_in_unit_disk();
