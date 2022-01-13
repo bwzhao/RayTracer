@@ -12,8 +12,10 @@
 #include "Bvh.h"
 #include "geometry/Triangle.h"
 
-ObjectList corneel_frame();
+void corneel_frame(ObjectList& objects);
 
 ObjectList cornell_box();
+
+ObjectList cornell_box_reverse_light();
 
 ObjectList cornell_box_obj();

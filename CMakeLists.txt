@@ -19,6 +19,9 @@ endif()
 add_executable(CornellBox examples/CornellBox.cpp ${SOURCE_FILES})
 target_include_directories(CornellBox PUBLIC ${INCLUDE_DIRECTORIES})
 
+add_executable(CornellBoxReverseLight examples/CornellBox_ReverseLight.cpp ${SOURCE_FILES})
+target_include_directories(CornellBoxReverseLight PUBLIC ${INCLUDE_DIRECTORIES})
+
 add_executable(MCTest MC_test.cpp)
 target_include_directories(MCTest PUBLIC ${INCLUDE_DIRECTORIES})
 

@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Vec3.h"
 #include <fstream>
+#include "integrator/PathTracingIntegrator.h"
 
 class Scene {
 private:
@@ -23,6 +24,8 @@ private:
     std::vector<Color> image_;
     std::vector<int> samples_;
 
+    PathTracingIntegrator path_tracing_integrator_;
+
 public:
     Scene(int image_width, int image_height, double aspect_ratio, int samples_per_pixel, int max_depth);
 
@@ -33,11 +36,11 @@ public:
     void set_lights(shared_ptr<ObjectList> lights_ptr) {lights_ptr_ = std::move(lights_ptr);}
 
     void render();
-    Color path_integrator(const Ray& r, int depth);
 
     void set_pixel(int idx, Color pixel_color);
     void write_image(char *file_name);
 
+    friend PathTracingIntegrator;
 };
 
 

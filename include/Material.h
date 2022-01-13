@@ -30,7 +30,7 @@ public:
         return false;
     }
 
-    virtual double scattering_pdf(
+    virtual double scattering_bxdf(
             const Ray& r_in, const HitRecord& rec, const Ray& scattered
     ) const {
         return 0;
@@ -51,7 +51,7 @@ public:
         return true;
     }
 
-    virtual double scattering_pdf(
+    virtual double scattering_bxdf(
             const Ray& r_in, const HitRecord& rec, const Ray& scattered
     ) const override{
         auto cosine = dot(rec.normal_, unit_vector(scattered.direction()));
@@ -161,7 +161,7 @@ public:
         return true;
     }
 
-    virtual double scattering_pdf(
+    virtual double scattering_bxdf(
             const Ray& r_in, const HitRecord& rec, const Ray& scattered
     ) const {
         return 0.25 / pi;
