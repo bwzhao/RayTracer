@@ -1,11 +1,14 @@
 #pragma once
 
+#include "geometry/Object.h"
+#include "Onb.h"
+
 class Pdf {
 public:
     virtual ~Pdf() {}
 
-    virtual double value(const Vec3& direction) const = 0;
-    virtual Vec3 generate() const = 0;
+    virtual double get_pdf_dir(const Vec3& direction) const = 0;
+    virtual Vec3 get_random_dir() const = 0;
 };
 
 inline Vec3 random_cosine_direction() {
@@ -24,12 +27,12 @@ class CosinePdf : public Pdf {
 public:
     CosinePdf(const Vec3& w) { uvw.build_from_w(w); }
 
-    virtual double value(const Vec3& direction) const override {
+    virtual double get_pdf_dir(const Vec3& direction) const override {
         auto cosine = dot(unit_vector(direction), uvw.w());
         return (cosine <= 0) ? 0 : cosine/pi;
     }
 
-    virtual Vec3 generate() const override {
+    virtual Vec3 get_random_dir() const override {
         return uvw.local(random_cosine_direction());
     }
 
@@ -41,12 +44,12 @@ class ObjectPdf : public Pdf {
 public:
     ObjectPdf(shared_ptr<Object> p, const Point3& origin) : ptr_(p), o_(origin) {}
 
-    virtual double value(const Vec3& direction) const override {
-        return ptr_->pdf_value(o_, direction);
+    virtual double get_pdf_dir(const Vec3& direction) const override {
+        return ptr_->pdf_value_from_point(o_, direction);
     }
 
-    virtual Vec3 generate() const override {
-        return ptr_->random(o_);
+    virtual Vec3 get_random_dir() const override {
+        return ptr_->random_from_point(o_);
     }
 
 public:
@@ -61,15 +64,15 @@ public:
         p_[1] = p1;
     }
 
-    virtual double value(const Vec3& direction) const override {
-        return 0.5 * p_[0]->value(direction) + 0.5 * p_[1]->value(direction);
+    virtual double get_pdf_dir(const Vec3& direction) const override {
+        return 0.5 * p_[0]->get_pdf_dir(direction) + 0.5 * p_[1]->get_pdf_dir(direction);
     }
 
-    virtual Vec3 generate() const override {
+    virtual Vec3 get_random_dir() const override {
         if (random_double() < 0.5)
-            return p_[0]->generate();
+            return p_[0]->get_random_dir();
         else
-            return p_[1]->generate();
+            return p_[1]->get_random_dir();
     }
 
 public:
@@ -92,11 +95,11 @@ class IsotropicPdf : public Pdf {
 public:
     IsotropicPdf() {}
 
-    virtual double value(const Vec3& direction) const override {
+    virtual double get_pdf_dir(const Vec3& direction) const override {
         return 0.25 / pi;
     }
 
-    virtual Vec3 generate() const override {
+    virtual Vec3 get_random_dir() const override {
         return random_in_unit_sphere();
     }
 };

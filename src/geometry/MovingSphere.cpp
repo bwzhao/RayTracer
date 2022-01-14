@@ -28,6 +28,7 @@ bool MovingSphere::hit(const Ray& r, double t_min, double t_max, HitRecord& rec)
     auto outward_normal = (rec.p_ - center(r.time())) / radius_;
     rec.set_face_normal(r, outward_normal);
     rec.mat_ptr_ = mat_ptr_;
+    rec.wi_ = r.direction();
 
     return true;
 }

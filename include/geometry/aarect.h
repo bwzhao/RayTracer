@@ -43,7 +43,7 @@ public:
         return true;
     }
 
-    virtual double pdf_value(const Point3& origin, const Vec3& v) const override {
+    virtual double pdf_value_from_point(const Point3& origin, const Vec3& v) const override {
         HitRecord rec;
         if (!this->hit(Ray(origin, v), 0.001, infinity, rec))
             return 0;
@@ -55,9 +55,18 @@ public:
         return distance_squared / (cosine * area);
     }
 
-    virtual Vec3 random(const Point3& origin) const override {
+    virtual Vec3 random_from_point(const Point3& origin) const override {
         auto random_point = Point3(random_double(x0_, x1_), k_, random_double(z0_, z1_));
         return random_point - origin;
+    }
+
+    virtual void random_pos(Point3 & pos, Vec3 & normal, double & pdf_pos) const override {
+        auto random_point = Point3(random_double(x0_, x1_), k_, random_double(z0_, z1_));
+        pos = random_point;
+        normal = Vec3(0., 1., 0.);
+
+        auto area = (x1_-x0_)*(z1_-z0_);
+        pdf_pos = 1. / area;
     }
 
 public:

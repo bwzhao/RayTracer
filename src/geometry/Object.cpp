@@ -80,6 +80,7 @@ bool rotate_y::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) con
 
     rec.p_ = p;
     rec.set_face_normal(rotated_r, normal);
+    rec.wi_ = r.direction();
 
     return true;
 }

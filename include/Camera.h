@@ -36,7 +36,7 @@ public:
         time1_ = time1;
     }
 
-    Ray get_ray(double s, double t) const {
+    Ray sample_ray(double s, double t) const {
         Vec3 rd = lens_radius_ * random_in_unit_disk();
         Vec3 offset = u_ * rd.x() + v_ * rd.y();
 

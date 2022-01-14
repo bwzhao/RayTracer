@@ -15,6 +15,8 @@ bool XYRect::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
     rec.set_face_normal(r, outward_normal);
     rec.mat_ptr_ = mp_;
     rec.p_ = r.at(t);
+    rec.wi_ = r.direction();
+
     return true;
 }
 
@@ -33,6 +35,8 @@ bool XZRect::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
     rec.set_face_normal(r, outward_normal);
     rec.mat_ptr_ = mp_;
     rec.p_ = r.at(t);
+    rec.wi_ = r.direction();
+
     return true;
 }
 
@@ -51,5 +55,7 @@ bool YZRect::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
     rec.set_face_normal(r, outward_normal);
     rec.mat_ptr_ = mp_;
     rec.p_ = r.at(t);
+    rec.wi_ = r.direction();
+
     return true;
 }

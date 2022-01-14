@@ -2,35 +2,30 @@
 
 #include "utils/rt_utils.h"
 #include "AABB.h"
+#include "Record.h"
 
 class Material;
 
-struct HitRecord {
-    Point3 p_;
-    Vec3 normal_;
-    std::shared_ptr<Material> mat_ptr_;
-    double t_;
-    double u_;
-    double v_;
-    bool front_face_;
-
-    inline void set_face_normal(const Ray& r, const Vec3& outward_normal) {
-        front_face_ = dot(r.direction(), outward_normal) < 0;
-        normal_ = front_face_ ? outward_normal :-outward_normal;
-    }
-};
-
 class Object {
 public:
+    shared_ptr<Material> mat_ptr_ = nullptr;
+
+public:
+    Object(): mat_ptr_(nullptr){}
+    Object(shared_ptr<Material> m): mat_ptr_(m){}
     virtual bool hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const = 0;
     virtual bool bounding_box(double time0, double time1, AABB& output_box) const = 0;
-    virtual double pdf_value(const Point3& o, const Vec3& v) const {
+
+    virtual double pdf_value_from_point(const Point3& o, const Vec3& v) const {
         return 0.0;
     }
 
-    virtual Vec3 random(const Vec3& o) const {
+    virtual Vec3 random_from_point(const Vec3& o) const {
         return Vec3(1, 0, 0);
     }
+
+    virtual void random_pos(Point3 & pos, Vec3 & normal, double & pdf_pos) const {};
+
 };
 
 

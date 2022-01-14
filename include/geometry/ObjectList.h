@@ -21,8 +21,8 @@ public:
             const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
     virtual bool bounding_box(
             double time0, double time1, AABB& output_box) const override;
-    double pdf_value(const Point3& o, const Vec3& v) const override;
-    Vec3 random(const Vec3& o) const override;
+    double pdf_value_from_point(const Point3& o, const Vec3& v) const override;
+    Vec3 random_from_point(const Vec3& o) const override;
 
 public:
     std::vector<shared_ptr<Object>> objects_;

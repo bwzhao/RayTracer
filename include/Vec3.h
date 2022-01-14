@@ -29,6 +29,14 @@ public:
         return *this;
     }
 
+    bool operator==(const Vec3 &v) const{
+        return (e_[0] == v.e_[0]) &&  (e_[1] == v.e_[1]) &&  (e_[2] == v.e_[2]);
+    }
+
+    bool operator!=(const Vec3 &v) const{
+        return (e_[0] != v.e_[0]) || (e_[1] != v.e_[1]) || (e_[2] != v.e_[2]);
+    }
+
     Vec3& operator*=(const double t) {
         e_[0] *= t;
         e_[1] *= t;

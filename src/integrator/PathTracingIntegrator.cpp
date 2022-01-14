@@ -29,10 +29,10 @@ Color PathTracingIntegrator::get_radiance(
     auto light_ptr = make_shared<ObjectPdf>(scene.lights_ptr_, rec.p_);
     MixturePdf p(light_ptr, srec.pdf_ptr_);
 
-    Ray scattered = Ray(rec.p_, p.generate(), r.time());
-    auto pdf_val = p.value(scattered.direction());
+    Ray scattered = Ray(rec.p_, p.get_random_dir(), r.time());
+    auto pdf_val = p.get_pdf_dir(scattered.direction());
 
     return emitted
-           + srec.attenuation_ * rec.mat_ptr_->scattering_bxdf(r, rec, scattered)
+           + srec.attenuation_ * rec.mat_ptr_->scattering_bxdf(r.direction(), rec, scattered.direction())
              * get_radiance(scattered, scene, depth - 1) / pdf_val;
 }

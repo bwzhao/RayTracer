@@ -10,7 +10,7 @@ public:
     MovingSphere() {}
     MovingSphere(
             Point3 cen0, Point3 cen1, double _time0, double _time1, double r, shared_ptr<Material> m)
-            : center0_(cen0), center1_(cen1), time0_(_time0), time1_(_time1), radius_(r), mat_ptr_(m)
+            : center0_(cen0), center1_(cen1), time0_(_time0), time1_(_time1), radius_(r), Object(m)
     {};
 
     virtual bool hit(
@@ -24,6 +24,6 @@ public:
     Point3 center0_, center1_;
     double time0_, time1_;
     double radius_;
-    shared_ptr<Material> mat_ptr_;
+//    shared_ptr<Material> mat_ptr_;
 };
 

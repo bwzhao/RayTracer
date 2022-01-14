@@ -31,17 +31,17 @@ bool ObjectList::bounding_box(double time0, double time1, AABB& output_box) cons
     return true;
 }
 
-double ObjectList::pdf_value(const Point3& o, const Vec3& v) const {
+double ObjectList::pdf_value_from_point(const Point3& o, const Vec3& v) const {
     auto weight = 1.0/objects_.size();
     auto sum = 0.0;
 
     for (const auto& object : objects_)
-        sum += weight * object->pdf_value(o, v);
+        sum += weight * object->pdf_value_from_point(o, v);
 
     return sum;
 }
 
-Vec3 ObjectList::random(const Vec3& o) const {
+Vec3 ObjectList::random_from_point(const Vec3& o) const {
     auto int_size = static_cast<int>(objects_.size());
-    return objects_[random_int(0, int_size-1)]->random(o);
+    return objects_[random_int(0, int_size - 1)]->random_from_point(o);
 }

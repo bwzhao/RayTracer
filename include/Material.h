@@ -6,15 +6,9 @@
 #include "Onb.h"
 #include "Pdf.h"
 #include "Sampler.h"
+#include "Record.h"
 
 struct HitRecord;
-
-struct ScatterRecord {
-    Ray specular_ray_;
-    bool is_specular_;
-    Color attenuation_;
-    shared_ptr<Pdf> pdf_ptr_;
-};
 
 class Material {
 public:
@@ -31,7 +25,7 @@ public:
     }
 
     virtual double scattering_bxdf(
-            const Ray& r_in, const HitRecord& rec, const Ray& scattered
+            const Vec3 & wi, const HitRecord& rec,  const Vec3 & wo
     ) const {
         return 0;
     }
@@ -52,9 +46,9 @@ public:
     }
 
     virtual double scattering_bxdf(
-            const Ray& r_in, const HitRecord& rec, const Ray& scattered
+            const Vec3 & wi, const HitRecord& rec,  const Vec3 & wo
     ) const override{
-        auto cosine = dot(rec.normal_, unit_vector(scattered.direction()));
+        auto cosine = dot(rec.normal_, unit_vector(wo));
         return cosine < 0 ? 0 : cosine/pi;
     }
 
@@ -162,8 +156,8 @@ public:
     }
 
     virtual double scattering_bxdf(
-            const Ray& r_in, const HitRecord& rec, const Ray& scattered
-    ) const {
+            const Vec3 & wi, const HitRecord& rec,  const Vec3 & wo
+    ) const override{
         return 0.25 / pi;
     }
 

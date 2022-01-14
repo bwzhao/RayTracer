@@ -43,6 +43,7 @@ bool ConstantMedium::hit(const Ray& r, double t_min, double t_max, HitRecord& re
     rec.normal_ = Vec3(1,0,0);  // arbitrary
     rec.front_face_ = true;     // also arbitrary
     rec.mat_ptr_ = phase_function_;
+    rec.wi_ = r.direction();
 
     return true;
 }

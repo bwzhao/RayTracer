@@ -13,7 +13,7 @@ n2_(n2),
 t0_(t0),
 t1_(t1),
 t2_(t2),
-mat_ptr_(m)
+Object(m)
 {
     e1_ = v1 - v0;
     e2_ = v2 - v0;
@@ -56,6 +56,7 @@ bool Triangle::hit(const Ray& r, double t_min, double t_max, HitRecord& rec) con
     rec.u_ = tmp_uv[0];
     rec.v_ = tmp_uv[1];
     rec.mat_ptr_ = mat_ptr_;
+    rec.wi_ = r.direction();
 
     return true;
 }
@@ -80,7 +81,7 @@ bool Triangle::bounding_box(double time0, double time1, AABB& output_box) const 
     return true;
 }
 
-double Triangle::pdf_value(const Point3& o, const Vec3& v) const {
+double Triangle::pdf_value_from_point(const Point3& o, const Vec3& v) const {
     HitRecord rec;
     if (!this->hit(Ray(o, v), 0.001, infinity, rec))
         return 0;
@@ -92,7 +93,7 @@ double Triangle::pdf_value(const Point3& o, const Vec3& v) const {
     return distance_squared / (cosine * area);
 }
 
-Vec3 Triangle::random(const Point3& o) const {
+Vec3 Triangle::random_from_point(const Point3& o) const {
     auto r1 = random_double(0., 1.);
     auto r2 = random_double(0., 1.);
     auto random_point = (1. - sqrt(r1)) * v0_ + (sqrt(r1) * (1. - r2)) * v1_ + r2 * sqrt(r1) * v2_;

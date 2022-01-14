@@ -2,10 +2,7 @@
 
 #include "utils/io_utils.h"
 #include "geometry/ObjectList.h"
-#include "geometry/Sphere.h"
 #include "Camera.h"
-#include "Material.h"
-#include "integrator/PathTracingIntegrator.h"
 
 
 
@@ -34,7 +31,7 @@ void Scene::render() {
                 auto idx = i + (image_height_ - 1 - j) * image_width_;
                 auto u = (i + random_double()) / (image_width_ - 1);
                 auto v = (j + random_double()) / (image_height_ - 1);
-                Ray r = cam_.get_ray(u, v);
+                Ray r = cam_.sample_ray(u, v);
                 auto pixel_color = path_tracing_integrator_.get_radiance(r, *this, max_depth_);
                 set_pixel(idx, pixel_color);
             }
