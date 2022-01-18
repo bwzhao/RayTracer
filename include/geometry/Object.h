@@ -20,11 +20,11 @@ public:
         return 0.0;
     }
 
-    virtual Vec3 random_from_point(const Vec3& o) const {
+    virtual Vec3 random_from_point(const Point3& o) const {
         return Vec3(1, 0, 0);
     }
 
-    virtual void random_pos(Point3 & pos, Vec3 & normal, double & pdf_pos) const {};
+    virtual void random_pos(Point3 & pos, Vec3 & normal, double & pdf_pos, double & u, double & v) const {};
 
 };
 

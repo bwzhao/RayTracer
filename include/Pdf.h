@@ -7,7 +7,7 @@ class Pdf {
 public:
     virtual ~Pdf() {}
 
-    virtual double get_pdf_dir(const Vec3& direction) const = 0;
+    virtual double get_pdf(const Vec3& direction) const = 0;
     virtual Vec3 get_random_dir() const = 0;
 };
 
@@ -27,13 +27,17 @@ class CosinePdf : public Pdf {
 public:
     CosinePdf(const Vec3& w) { uvw.build_from_w(w); }
 
-    virtual double get_pdf_dir(const Vec3& direction) const override {
+    virtual double get_pdf(const Vec3& direction) const override {
         auto cosine = dot(unit_vector(direction), uvw.w());
         return (cosine <= 0) ? 0 : cosine/pi;
     }
 
     virtual Vec3 get_random_dir() const override {
         return uvw.local(random_cosine_direction());
+    }
+
+    void set_normal_dir(const Vec3& w) {
+        uvw.build_from_w(w);
     }
 
 public:
@@ -44,7 +48,7 @@ class ObjectPdf : public Pdf {
 public:
     ObjectPdf(shared_ptr<Object> p, const Point3& origin) : ptr_(p), o_(origin) {}
 
-    virtual double get_pdf_dir(const Vec3& direction) const override {
+    virtual double get_pdf(const Vec3& direction) const override {
         return ptr_->pdf_value_from_point(o_, direction);
     }
 
@@ -64,8 +68,8 @@ public:
         p_[1] = p1;
     }
 
-    virtual double get_pdf_dir(const Vec3& direction) const override {
-        return 0.5 * p_[0]->get_pdf_dir(direction) + 0.5 * p_[1]->get_pdf_dir(direction);
+    virtual double get_pdf(const Vec3& direction) const override {
+        return 0.5 * p_[0]->get_pdf(direction) + 0.5 * p_[1]->get_pdf(direction);
     }
 
     virtual Vec3 get_random_dir() const override {
@@ -95,7 +99,7 @@ class IsotropicPdf : public Pdf {
 public:
     IsotropicPdf() {}
 
-    virtual double get_pdf_dir(const Vec3& direction) const override {
+    virtual double get_pdf(const Vec3& direction) const override {
         return 0.25 / pi;
     }
 

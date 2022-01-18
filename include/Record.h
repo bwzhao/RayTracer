@@ -4,6 +4,8 @@
 
 class Material;
 class Pdf;
+class Light;
+class Camera;
 
 struct HitRecord {
     Point3 p_;
@@ -26,4 +28,14 @@ struct ScatterRecord {
     bool is_specular_;
     Color attenuation_;
     shared_ptr<Pdf> pdf_ptr_;
+};
+
+struct EndpointRecord {
+    union {
+        const Camera *camera;
+        const Light *light;
+    };
+    Point3 p_;
+    Vec3 normal_;
+    bool front_face_;
 };

@@ -6,12 +6,20 @@
 class Light{
 public:
     Light(shared_ptr<Object> p)
-    : ptr_(p){}
+    : object_ptr_(p){}
 
-    void sample_ray(Ray & random_ray, double & pdf_pos, double & pdf_dir);
+    virtual Color sample_ray(Ray & random_ray, double & pdf_pos, double & pdf_dir) = 0;
 
 public:
-    shared_ptr<Object> ptr_;
+    shared_ptr<Object> object_ptr_;
+    shared_ptr<CosinePdf> pdf_ptr;
+};
+
+class AreaLight: public Light{
+public:
+    virtual Color sample_ray(Ray & random_ray, double & pdf_pos, double & pdf_dir);
+public:
+    shared_ptr<CosinePdf> pdf_ptr;
 };
 
 

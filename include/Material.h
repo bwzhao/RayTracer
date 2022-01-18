@@ -25,10 +25,14 @@ public:
     }
 
     virtual double scattering_bxdf(
-            const Vec3 & wi, const HitRecord& rec,  const Vec3 & wo
+            const Vec3 & wi, const Vec3 & normal,  const Vec3 & wo
     ) const {
         return 0;
     }
+
+    virtual Color get_Le(double u, double v, const Point3& p) {
+        return Color(0, 0, 0);
+    };
 };
 
 class Lambertian : public Material {
@@ -46,9 +50,9 @@ public:
     }
 
     virtual double scattering_bxdf(
-            const Vec3 & wi, const HitRecord& rec,  const Vec3 & wo
+            const Vec3 & wi, const Vec3 & normal,  const Vec3 & wo
     ) const override{
-        auto cosine = dot(rec.normal_, unit_vector(wo));
+        auto cosine = dot(normal, unit_vector(wo));
         return cosine < 0 ? 0 : cosine/pi;
     }
 
@@ -137,6 +141,10 @@ public:
             return Color(0, 0, 0);
     }
 
+    virtual Color get_Le(double u, double v, const Point3& p) {
+        return emit_->value(u, v, p);
+    }
+
 public:
     shared_ptr<Texture> emit_;
 };
@@ -156,7 +164,7 @@ public:
     }
 
     virtual double scattering_bxdf(
-            const Vec3 & wi, const HitRecord& rec,  const Vec3 & wo
+            const Vec3 & wi, const Vec3 & normal,  const Vec3 & wo
     ) const override{
         return 0.25 / pi;
     }

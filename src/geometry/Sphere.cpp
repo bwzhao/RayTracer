@@ -55,12 +55,14 @@ Vec3 Sphere::random_from_point(const Point3& o) const {
     return uvw.local(random_to_sphere(radius_, distance_squared));
 }
 
-void Sphere::random_pos(Point3 &pos, Vec3 &normal, double &pdf_pos) const {
+void Sphere::random_pos(Point3 &pos, Vec3 &normal, double &pdf_pos, double & u, double & v) const {
     auto random_dir = random_unit_vector();
     pos = center_ + radius_ * random_dir;
     normal = random_dir;
 
     auto solid_angle = 4. * pi;
+
+    get_sphere_uv(random_dir, u, v);
     pdf_pos = 1. / solid_angle;
 
 }

@@ -60,12 +60,15 @@ public:
         return random_point - origin;
     }
 
-    virtual void random_pos(Point3 & pos, Vec3 & normal, double & pdf_pos) const override {
+    virtual void random_pos(Point3 & pos, Vec3 & normal, double & pdf_pos, double & u, double & v) const override {
         auto random_point = Point3(random_double(x0_, x1_), k_, random_double(z0_, z1_));
         pos = random_point;
         normal = Vec3(0., 1., 0.);
 
         auto area = (x1_-x0_)*(z1_-z0_);
+
+        u = (random_point.x() - x0_) / (x1_ - x0_);
+        v = (random_point.y() - z0_) / (z1_ - z0_);
         pdf_pos = 1. / area;
     }
 
