@@ -26,11 +26,12 @@ Color PathTracingIntegrator::get_radiance(
                * get_radiance(srec.specular_ray_, scene, depth - 1);
     }
 
-    auto light_ptr = make_shared<ObjectPdf>(scene.focus_lights_ptr_, rec.p_);
-    MixturePdf p(light_ptr, srec.pdf_ptr_);
+//    auto light_ptr = make_shared<ObjectPdf>(scene.focus_lights_ptr_, rec.p_);
+//    MixturePdf p(light_ptr, srec.pdf_ptr_);
+    auto p = srec.pdf_ptr_;
 
-    Ray scattered = Ray(rec.p_, p.get_random_dir(), r.time());
-    auto pdf_val = p.get_pdf(scattered.direction());
+    Ray scattered = Ray(rec.p_, p->get_random_dir(), r.time());
+    auto pdf_val = p->get_pdf(scattered.direction());
 
     return emitted
            + srec.attenuation_ * rec.mat_ptr_->scattering_bxdf(r.direction(), rec.normal_, scattered.direction())
@@ -41,3 +42,5 @@ Color PathTracingIntegrator::render_pixel(const Scene & scene, double u, double 
     Ray r = scene.cam_.sample_ray(u, v);
     return get_radiance(r, scene, max_depth);
 }
+
+

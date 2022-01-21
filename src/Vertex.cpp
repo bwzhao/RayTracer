@@ -1,4 +1,5 @@
 #include "Vertex.h"
+#include "Scene.h"
 
 const Point3 &Vertex::p() const { return p_;}
 
@@ -151,4 +152,20 @@ Vertex Vertex::create_background(const HitRecord &rec, const Color &beta, const 
     temp_vertex.pdf_rev_ = 1.;
 
     return temp_vertex;
+}
+
+double Vertex::f(const Vertex &next) const{
+    Vec3 wo = unit_vector(next.p() - p());
+    return mat_ptr_->scattering_bxdf(wi_, normal_, wo);
+}
+
+bool Vertex::vis_test(const Vertex &v1, const Vertex &v2, const Scene &scene) {
+    auto p1 = v1.p(), p2 = v2.p();
+    auto dir = unit_vector(p2 - p1);
+    auto ray_1to2 = Ray(p1, dir, 0.);
+
+    HitRecord rec;
+    scene.world_ptr_->hit(ray_1to2, RAY_EPSILON, infinity, rec);
+
+    return (rec.p_ - p2).near_zero() && dot(v2.ng(), ray_1to2.direction()) <= 0.;
 }

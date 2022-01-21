@@ -8,6 +8,7 @@
 
 class PathTracingIntegrator;
 class BDPTIntegrator;
+class Vertex;
 
 class Scene {
 private:
@@ -47,6 +48,7 @@ public:
 
     friend PathTracingIntegrator;
     friend BDPTIntegrator;
+    friend Vertex;
 };
 
 

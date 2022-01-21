@@ -13,6 +13,7 @@ public:
     // constructor
     Vec3() : e_{0, 0, 0} {}
     Vec3(double e0, double e1, double e2) : e_{e0, e1, e2} {}
+    Vec3(double e) : e_{e, e, e} {}
 
     double x() const { return e_[0]; }
     double y() const { return e_[1]; }
@@ -41,6 +42,13 @@ public:
         e_[0] *= t;
         e_[1] *= t;
         e_[2] *= t;
+        return *this;
+    }
+
+    Vec3& operator*=(const Vec3 &v) {
+        e_[0] *= v.e_[0];
+        e_[1] *= v.e_[1];
+        e_[2] *= v.e_[2];
         return *this;
     }
 
@@ -109,6 +117,12 @@ inline double dot(const Vec3 &u, const Vec3 &v) {
     return u.e_[0] * v.e_[0]
            + u.e_[1] * v.e_[1]
            + u.e_[2] * v.e_[2];
+}
+
+inline double abs_dot(const Vec3 &u, const Vec3 &v) {
+    return fabs(u.e_[0] * v.e_[0]
+           + u.e_[1] * v.e_[1]
+           + u.e_[2] * v.e_[2]);
 }
 
 inline Vec3 cross(const Vec3 &u, const Vec3 &v) {

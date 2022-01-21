@@ -1,4 +1,5 @@
 #include "integrator/BDPTIntegrator.h"
+#include "Vertex.h"
 
 
 int BDPTIntegrator::generate_camera_subpath(const Scene &scene, int max_depth, double u, double v, std::vector<Vertex> &path_camera) {
@@ -69,7 +70,7 @@ int BDPTIntegrator::random_walk(const Scene &scene, Ray ray, Color cur_beta, dou
             Vec3 scattered_dir = srec.pdf_ptr_->get_random_dir();
             Ray scattered_ray = Ray(rec.p_, scattered_dir, ray.time());
             auto pdf_val = srec.pdf_ptr_->get_pdf(scattered_dir);
-            auto f = cur_beta * srec.attenuation_ * rec.mat_ptr_->scattering_bxdf(ray.direction(), rec.normal_, scattered_dir);
+            auto f = srec.attenuation_ * rec.mat_ptr_->scattering_bxdf(ray.direction(), rec.normal_, scattered_dir);
 
             cur_beta = cur_beta * f / pdf_fwd;
             vertex = Vertex::create_medium(srec, rec, cur_beta, prev, pdf_fwd);
@@ -81,8 +82,10 @@ int BDPTIntegrator::random_walk(const Scene &scene, Ray ray, Color cur_beta, dou
         }
         // If it is a surface
         else{
+            // Specular surface
             if (srec.is_specular_) {
-                cur_beta = cur_beta * srec.attenuation_ / pdf_fwd;
+                const auto & wi = ray.direction();
+                cur_beta = cur_beta * srec.attenuation_ * fabs(dot(wi, rec.normal_))/ pdf_fwd;
                 vertex = Vertex::create_surface(srec, rec, cur_beta, prev, pdf_fwd);
                 vertex.is_specular_ = true;
 
@@ -127,5 +130,72 @@ Color BDPTIntegrator::render_pixel(const Scene & scene, double u, double v, int 
     int n_path_camera = generate_camera_subpath(scene, max_depth, u, v, path_camera);
     int n_path_light = generate_light_subpath(scene, max_depth, path_light);
 
-    return path_camera[n_path_camera - 1].beta_;
+    Color L = Vec3(0.);
+    int sample_count = 0;
+    for (int t = 1; t <= n_path_camera; ++t) {
+        for (int s = 0; s <= n_path_light; ++s) {
+            int depth = t + s - 2;
+            if ((s == 1 && t == 1) || depth < 0 || depth > max_depth)
+                continue;
+            Color Lpath = connect_BDPT(scene, path_light, path_camera, s, t);
+            L += Lpath;
+            ++sample_count;
+        }
+    }
+    if (sample_count != 0) {
+        return L;
+    }
+    else{
+        return Vec3(0.);
+    }
+
+
+}
+
+Color BDPTIntegrator::connect_BDPT(const Scene &scene, std::vector<Vertex> &lightVertices,
+                                          std::vector<Vertex> &cameraVertices, int s, int t) {
+    Color L = Vec3(0.);
+    if (t > 1 && s != 0 && cameraVertices[t - 1].type_ == VertexType::Background) {
+        return Color(0.);
+    }
+
+    Vertex sampled;
+    if (s == 0) {
+        const Vertex &pt = cameraVertices[t - 1];
+        if (pt.type_ == VertexType::Background)
+            L = pt.beta_;
+    } else if (t == 1) {
+        //TODO: Add this case in the future;
+        L = Vec3(0.);
+    } else if (s == 1) {
+        //TODO: Add this case in the future;
+        L = Vec3(0.);
+    } else {
+        const Vertex &qs = lightVertices[s - 1], &pt = cameraVertices[t - 1];
+        if (qs.is_connectable() && pt.is_connectable()) {
+            L = qs.beta_ * qs.f(pt) * pt.f(qs) * pt.beta_;
+            if (!L.near_zero()) {
+                L *= G(scene, qs, pt);
+            };
+        }
+    }
+
+    return L;
+}
+
+Color BDPTIntegrator::G(const Scene &scene, const Vertex &v0, const Vertex &v1) {
+        Vec3 d = v0.p() - v1.p();
+        double g = 1 / d.length_squared();
+        d *= std::sqrt(g);
+        if (v0.is_on_surface())
+            g *= abs_dot(v0.ng(), d);
+        if (v1.is_on_surface())
+            g *= abs_dot(v1.ng(), d);
+
+        if (Vertex::vis_test(v0, v1, scene)){
+            return g;
+        }
+        else{
+            return Color(0.);
+        }
 }

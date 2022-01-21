@@ -5,6 +5,7 @@
 #include "geometry/ObjectList.h"
 #include "Integrator.h"
 #include "Material.h"
+#include "Vertex.h"
 
 class Scene;
 

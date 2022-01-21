@@ -16,8 +16,8 @@ int main(int argc, char **argv) {
     const auto aspect_ratio = 1.0 / 1.0;
     const int image_width = 500;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 100;
-    const int max_depth = 25;
+    const int samples_per_pixel = 500;
+    const int max_depth = 50;
 
     Point3 lookfrom(278, 278, -800);
     Point3 lookat(278, 278, 0);
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 //    auto world = load_obj();
     shared_ptr<ObjectList> lights_ptr = make_shared<ObjectList>();
     lights_ptr->add(make_shared<XZRect>(213, 343, 227, 332, 500, shared_ptr<Material>()));
-    lights_ptr->add(make_shared<Sphere>(Point3(190, 90, 190), 90, shared_ptr<Material>()));
+//    lights_ptr->add(make_shared<Sphere>(Point3(190, 90, 190), 90, shared_ptr<Material>()));
 //    lights_ptr->add(make_shared<flip_face>(make_shared<XZRect>(-1, 1, -1, 1, 2, shared_ptr<Material>())));
 
     auto light = make_shared<DiffuseLight>(Color(15, 15, 15));
@@ -50,8 +50,8 @@ int main(int argc, char **argv) {
     scene.set_light(light_ptr);
 
     // Render
-//    scene.render(path_tracing_integrator_ptr);
-    scene.render(BDLT_integrator_ptr);
+    scene.render(path_tracing_integrator_ptr);
+//    scene.render(BDLT_integrator_ptr);
     scene.write_image(argv[1]);
 
 

@@ -19,6 +19,9 @@ public:
     int generate_light_subpath(const Scene &scene, int max_depth, std::vector<Vertex> &path_light);
 
     int random_walk(const Scene &scene, Ray ray, Color cur_beta, double pdf, int maxDepth, TransportMode mode, std::vector<Vertex> & path);
+    Color connect_BDPT(const Scene & scene, std::vector<Vertex> &lightVertices,
+                       std::vector<Vertex> &cameraVertices, int s, int t);
+    Color G(const Scene &scene, const Vertex &v0, const Vertex &v1);
 
     virtual Color render_pixel(const Scene & scene, double u, double v, int max_depth) override;
 };

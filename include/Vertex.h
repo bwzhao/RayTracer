@@ -39,6 +39,7 @@ struct Vertex {
                     const Vertex &next);
     double pdf_light (const Scene &scene, const Vertex &next) const;
     double pdf_light_origin(const Scene &scene, const Vertex &v) const;
+    double f(const Vertex &next) const;
 
     static Vertex create_camera(const Ray & ray, const Color &beta);
     static Vertex
@@ -48,4 +49,6 @@ struct Vertex {
                                 double pdf);
     static Vertex create_surface(const ScatterRecord &srec, const HitRecord &rec, const Color &beta, const Vertex &prev,
                                  double pdf);
+
+    static bool vis_test(const Vertex &v1, const Vertex &v2, const Scene &scene);
 };
