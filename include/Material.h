@@ -27,12 +27,16 @@ public:
     virtual double scattering_bxdf(
             const Vec3 & wi, const Vec3 & normal,  const Vec3 & wo
     ) const {
-        return 0;
+        return 1.;
     }
 
     virtual Color get_Le(double u, double v, const Point3& p) {
         return Color(0, 0, 0);
     };
+
+    virtual bool is_medium() const{
+        return false;
+    }
 };
 
 class Lambertian : public Material {
@@ -71,7 +75,7 @@ public:
         srec.specular_ray_ = Ray(rec.p_, reflected + fuzz_ * random_in_unit_sphere());
         srec.attenuation_ = albedo_;
         srec.is_specular_ = true;
-        srec.pdf_ptr_ = 0;
+        srec.pdf_ptr_ = nullptr;
         return true;
     }
 
@@ -167,6 +171,10 @@ public:
             const Vec3 & wi, const Vec3 & normal,  const Vec3 & wo
     ) const override{
         return 0.25 / pi;
+    }
+
+    virtual bool is_medium() const override{
+        return true;
     }
 
 public:

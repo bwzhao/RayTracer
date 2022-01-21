@@ -3,7 +3,7 @@
 #include "utils/io_utils.h"
 #include "geometry/ObjectList.h"
 #include "Camera.h"
-
+#include "integrator/PathTracingIntegrator.h"
 
 
 Scene::Scene(int image_width, int image_height, double aspect_ratio, int samples_per_pixel, int max_depth):
@@ -23,7 +23,7 @@ void Scene::set_camera(Point3 lookfrom, Point3 lookat, Vec3 vup, double vfov, do
     cam_.set_camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, focus_dist, time0, time1);
 }
 
-void Scene::render() {
+void Scene::render(shared_ptr<Integrator> integrator_ptr) {
     for (int s = 0; s < samples_per_pixel_; ++s) {
         std::cout << "\rSamples remaining: " << samples_per_pixel_ - s - 1<< ' ' << std::flush;
         for (int j = image_height_ - 1; j >= 0; --j) {
@@ -31,8 +31,8 @@ void Scene::render() {
                 auto idx = i + (image_height_ - 1 - j) * image_width_;
                 auto u = (i + random_double()) / (image_width_ - 1);
                 auto v = (j + random_double()) / (image_height_ - 1);
-                Ray r = cam_.sample_ray(u, v);
-                auto pixel_color = path_tracing_integrator_.get_radiance(r, *this, max_depth_);
+//                Ray r = cam_.sample_ray(u, v);
+                auto pixel_color = integrator_ptr->render_pixel(*this, u, v, max_depth_);
                 set_pixel(idx, pixel_color);
             }
         }

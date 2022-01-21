@@ -6,7 +6,7 @@
   * [ ] point light
 * ### Integrator:
   * [x] path tracing
-  * [ ] bidirectional light transport
+  * [ ] bidirectional path tracing
   * [ ] metropolis light transport
 * ### Primitives: 
   * [x] triangle

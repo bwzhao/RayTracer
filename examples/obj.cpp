@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     lights->add(make_shared<Sphere>(Point3(190, 90, 190), 90 , shared_ptr<Material>()));
 
     scene.set_world(world);
-    scene.set_lights(lights);
+    scene.set_focus_lights(lights);
 
     // Render
     scene.render();

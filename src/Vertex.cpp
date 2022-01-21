@@ -15,6 +15,7 @@ bool Vertex::is_connectable() const {
         case VertexType::Light:   return true;
         case VertexType::Camera:  return true;
         case VertexType::Surface: return !is_specular_;
+        case VertexType::Background: return false;
     }
 }
 
@@ -76,11 +77,13 @@ Vertex Vertex::create_camera(const Ray & ray, const Color &beta) {
     temp_vertex.wi_ = Vec3(0, 0, 0);
     temp_vertex.normal_ = ray.direction();
     temp_vertex.pdf_ptr_ = nullptr;
+    temp_vertex.pdf_fwd_ = 1.;
+    temp_vertex.pdf_rev_ = 1.;
 
     return temp_vertex;
 }
 
-Vertex Vertex::create_light(const Light & light, const Ray & ray, const Color &beta, double pdf_pos){
+Vertex Vertex::create_light(const Light &light, const Ray &ray, const Color &beta, double pdf, const Vec3 &normal) {
     auto temp_vertex = Vertex();
     temp_vertex.type_ = VertexType::Light;
 
@@ -89,39 +92,63 @@ Vertex Vertex::create_light(const Light & light, const Ray & ray, const Color &b
     temp_vertex.is_specular_ = false;
     temp_vertex.mat_ptr_ = light.object_ptr_->mat_ptr_;
     temp_vertex.wi_ = Vec3(0, 0, 0);
-    temp_vertex.normal_ = ray.direction();
-    temp_vertex.pdf_ptr_ = light.pdf_ptr;
-    temp_vertex.pdf_pos_ = pdf_pos;
+    temp_vertex.normal_ = normal;
+    temp_vertex.pdf_ptr_ = light.pdf_ptr_;
+    temp_vertex.pdf_fwd_ = pdf;
+    temp_vertex.pdf_rev_ = 1.;
 
     return temp_vertex;
 }
 
-Vertex Vertex::create_medium(const ScatterRecord &srec_, HitRecord rec_, const Color &beta, const Vertex &prev) {
+Vertex Vertex::create_medium(const ScatterRecord &srec, const HitRecord &rec, const Color &beta, const Vertex &prev,
+                             double pdf) {
     auto temp_vertex = Vertex();
     temp_vertex.type_ = VertexType::Medium;
 
     temp_vertex.beta_ = beta;
-    temp_vertex.p_ = rec_.p_;
-    temp_vertex.is_specular_ = srec_.is_specular_;
-    temp_vertex.mat_ptr_ = rec_.mat_ptr_;
-    temp_vertex.wi_ = rec_.wi_;
-    temp_vertex.normal_ = rec_.normal_;
-    temp_vertex.pdf_ptr_ = srec_.pdf_ptr_;
+    temp_vertex.p_ = rec.p_;
+    temp_vertex.is_specular_ = srec.is_specular_;
+    temp_vertex.mat_ptr_ = rec.mat_ptr_;
+    temp_vertex.wi_ = rec.wi_;
+    temp_vertex.normal_ = rec.normal_;
+    temp_vertex.pdf_ptr_ = srec.pdf_ptr_;
+    temp_vertex.pdf_fwd_ = pdf;
+    temp_vertex.pdf_rev_ = 1.;
 
     return temp_vertex;
 }
 
-Vertex Vertex::create_surface(const ScatterRecord &srec_, HitRecord rec_, const Color &beta, const Vertex &prev) {
+Vertex Vertex::create_surface(const ScatterRecord &srec, const HitRecord &rec, const Color &beta, const Vertex &prev,
+                              double pdf) {
     auto temp_vertex = Vertex();
     temp_vertex.type_ = VertexType::Surface;
 
     temp_vertex.beta_ = beta;
-    temp_vertex.p_ = rec_.p_;
-    temp_vertex.is_specular_ = srec_.is_specular_;
-    temp_vertex.mat_ptr_ = rec_.mat_ptr_;
-    temp_vertex.wi_ = rec_.wi_;
-    temp_vertex.normal_ = rec_.normal_;
-    temp_vertex.pdf_ptr_ = srec_.pdf_ptr_;
+    temp_vertex.p_ = rec.p_;
+    temp_vertex.is_specular_ = srec.is_specular_;
+    temp_vertex.mat_ptr_ = rec.mat_ptr_;
+    temp_vertex.wi_ = rec.wi_;
+    temp_vertex.normal_ = rec.normal_;
+    temp_vertex.pdf_ptr_ = srec.pdf_ptr_;
+    temp_vertex.pdf_fwd_ = pdf;
+    temp_vertex.pdf_rev_ = 1.;
+
+    return temp_vertex;
+}
+
+Vertex Vertex::create_background(const HitRecord &rec, const Color &beta, const Vertex &prev, double pdf) {
+    auto temp_vertex = Vertex();
+    temp_vertex.type_ = VertexType::Background;
+
+    temp_vertex.beta_ = beta;
+    temp_vertex.p_ = rec.p_;
+    temp_vertex.is_specular_ = false;
+    temp_vertex.mat_ptr_ = rec.mat_ptr_;
+    temp_vertex.wi_ = rec.wi_;
+    temp_vertex.normal_ = rec.normal_;
+    temp_vertex.pdf_ptr_ = nullptr;
+    temp_vertex.pdf_fwd_ = pdf;
+    temp_vertex.pdf_rev_ = 1.;
 
     return temp_vertex;
 }

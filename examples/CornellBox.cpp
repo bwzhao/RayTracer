@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 //    lights_ptr->add(make_shared<flip_face>(make_shared<XZRect>(-1, 1, -1, 1, 2, shared_ptr<Material>())));
 
     scene.set_world(world);
-    scene.set_lights(lights_ptr);
+    scene.set_focus_lights(lights_ptr);
 
     // Render
     scene.render();

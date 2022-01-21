@@ -8,6 +8,8 @@
 #include "Scene.h"
 #include "scene_example/connell_box.h"
 #include "utils/obj_loader.h"
+#include "integrator/PathTracingIntegrator.h"
+#include "integrator/BDPTIntegrator.h"
 
 int main(int argc, char **argv) {
     // Set up scene
@@ -15,7 +17,7 @@ int main(int argc, char **argv) {
     const int image_width = 500;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 100;
-    const int max_depth = 50;
+    const int max_depth = 25;
 
     Point3 lookfrom(278, 278, -800);
     Point3 lookat(278, 278, 0);
@@ -29,6 +31,9 @@ int main(int argc, char **argv) {
     Scene scene(image_width, image_height, aspect_ratio, samples_per_pixel, max_depth);
     scene.set_camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, time0, time1);
 
+    std::shared_ptr<Integrator> path_tracing_integrator_ptr = std::make_shared<PathTracingIntegrator>();
+    std::shared_ptr<Integrator> BDLT_integrator_ptr = std::make_shared<BDPTIntegrator>();
+
     // World
     auto world = cornell_box_reverse_light();
 //    auto world = load_obj();
@@ -37,11 +42,16 @@ int main(int argc, char **argv) {
     lights_ptr->add(make_shared<Sphere>(Point3(190, 90, 190), 90, shared_ptr<Material>()));
 //    lights_ptr->add(make_shared<flip_face>(make_shared<XZRect>(-1, 1, -1, 1, 2, shared_ptr<Material>())));
 
+    auto light = make_shared<DiffuseLight>(Color(15, 15, 15));
+    shared_ptr<Light> light_ptr = std::make_shared<AreaLight>(make_shared<XZRect>(213, 343, 227, 332, 500, shared_ptr<Material>()),  Color(15, 15, 15));
+
     scene.set_world(world);
-    scene.set_lights(lights_ptr);
+    scene.set_focus_lights(lights_ptr);
+    scene.set_light(light_ptr);
 
     // Render
-    scene.render();
+//    scene.render(path_tracing_integrator_ptr);
+    scene.render(BDLT_integrator_ptr);
     scene.write_image(argv[1]);
 
 
