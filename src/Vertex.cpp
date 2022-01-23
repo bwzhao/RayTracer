@@ -24,7 +24,7 @@ bool Vertex::is_light() const {
     return type_ == VertexType::Light;
 }
 
-Color Vertex::emitted(const Ray &r_in, const HitRecord &rec, double u, double v, const Point3 &p) {return mat_ptr_->emitted(r_in, rec, u, v, p);}
+Color Vertex::emitted(const Ray &r_in, const HitRecord &rec, double u, double v, const Point3 &p) const{return mat_ptr_->emitted(r_in, rec, u, v, p);}
 
 bool Vertex::is_on_surface() const { return ng() != Vec3(); }
 
@@ -159,12 +159,11 @@ double Vertex::f(const Vertex &next) const{
     return mat_ptr_->scattering_bxdf(wi_, normal_, wo);
 }
 
-bool Vertex::vis_test(const Vertex &v1, const Vertex &v2, const Scene &scene) {
+bool Vertex::vis_test(const Vertex &v1, const Vertex &v2, const Scene &scene, HitRecord & rec) {
     auto p1 = v1.p(), p2 = v2.p();
     auto dir = unit_vector(p2 - p1);
     auto ray_1to2 = Ray(p1, dir, 0.);
 
-    HitRecord rec;
     scene.world_ptr_->hit(ray_1to2, RAY_EPSILON, infinity, rec);
 
     return (rec.p_ - p2).near_zero() && dot(v2.ng(), ray_1to2.direction()) <= 0.;

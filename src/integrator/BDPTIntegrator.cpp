@@ -13,7 +13,7 @@ int BDPTIntegrator::generate_camera_subpath(const Scene &scene, int max_depth, d
     double pdf_pos = 1., pdf_dir = 1., pdf;
 
     pdf = pdf_pos * pdf_dir;
-    return random_walk(scene, r_ini, beta, pdf, max_depth - 1, TransportMode::Radiance, path_camera) + 1;
+    return random_walk(scene, r_ini, beta, pdf, max_depth - 1, TransportMode::Forward, path_camera) + 1;
 }
 
 int BDPTIntegrator::generate_light_subpath(const Scene &scene, int max_depth, std::vector<Vertex> &path_light) {
@@ -30,7 +30,7 @@ int BDPTIntegrator::generate_light_subpath(const Scene &scene, int max_depth, st
     beta *= dot(r_ini.direction(), normal);
     path_light[0] = Vertex::create_light(*scene.get_light_ptr(), r_ini, beta, pdf, normal);
 
-    return random_walk(scene, r_ini, beta, pdf, max_depth - 1, TransportMode::Importance, path_light) + 1;
+    return random_walk(scene, r_ini, beta, pdf, max_depth - 1, TransportMode::Backward, path_light) + 1;
 }
 
 int BDPTIntegrator::random_walk(const Scene &scene, Ray ray, Color cur_beta, double pdf, int maxDepth, TransportMode mode, std::vector<Vertex> & path) {
@@ -45,7 +45,7 @@ int BDPTIntegrator::random_walk(const Scene &scene, Ray ray, Color cur_beta, dou
 
         // If the Ray hits nothing
         if (!scene.world_ptr_->hit(ray, RAY_EPSILON, infinity, rec)){
-            if (mode == TransportMode::Radiance) {
+            if (mode == TransportMode::Forward) {
                 cur_beta = cur_beta * scene.background_ / pdf_fwd;
                 vertex = Vertex::create_background(rec, cur_beta, prev, pdf_fwd);
                 ++bounces;
@@ -57,7 +57,7 @@ int BDPTIntegrator::random_walk(const Scene &scene, Ray ray, Color cur_beta, dou
         Color emitted = rec.mat_ptr_->emitted(ray, rec, rec.u_, rec.v_, rec.p_);
         // If it hits a light
         if (!rec.mat_ptr_->scatter(ray, rec, srec)){
-            if (mode == TransportMode::Radiance) {
+            if (mode == TransportMode::Forward) {
                 cur_beta = cur_beta * emitted / pdf_fwd;
                 vertex = Vertex::create_background(rec, cur_beta, prev, pdf_fwd);
                 ++bounces;
@@ -138,6 +138,10 @@ Color BDPTIntegrator::render_pixel(const Scene & scene, double u, double v, int 
             if ((s == 1 && t == 1) || depth < 0 || depth > max_depth)
                 continue;
             Color Lpath = connect_BDPT(scene, path_light, path_camera, s, t);
+            if (Lpath.x() < 0){
+                continue;
+            }
+
             L += Lpath;
             ++sample_count;
         }
@@ -148,15 +152,36 @@ Color BDPTIntegrator::render_pixel(const Scene & scene, double u, double v, int 
     else{
         return Vec3(0.);
     }
+}
 
+void BDPTIntegrator::render_pixel_test(Scene & scene, double u, double v, int max_depth, int idx) {
+    std::vector<Vertex> path_camera(max_depth + 2);
+    std::vector<Vertex> path_light(max_depth + 1);
 
+    int n_path_camera = generate_camera_subpath(scene, max_depth, u, v, path_camera);
+    int n_path_light = generate_light_subpath(scene, max_depth, path_light);
+
+    for (int t = 1; t <= n_path_camera; ++t) {
+        for (int s = 0; s <= n_path_light; ++s) {
+            int depth = t + s - 2;
+            if ((s == 1 && t == 1) || depth < 0 || depth > max_depth)
+                continue;
+            Color Lpath = connect_BDPT(scene, path_light, path_camera, s, t);
+            if (Lpath.x() < 0){
+                continue;
+            }
+            if (s < 10 && t < 10) {
+                scene.set_pixel(idx, Lpath, s, t);
+            }
+        }
+    }
 }
 
 Color BDPTIntegrator::connect_BDPT(const Scene &scene, std::vector<Vertex> &lightVertices,
                                           std::vector<Vertex> &cameraVertices, int s, int t) {
     Color L = Vec3(0.);
     if (t > 1 && s != 0 && cameraVertices[t - 1].type_ == VertexType::Background) {
-        return Color(0.);
+        return cameraVertices[t - 1].beta_;
     }
 
     Vertex sampled;
@@ -166,17 +191,36 @@ Color BDPTIntegrator::connect_BDPT(const Scene &scene, std::vector<Vertex> &ligh
             L = pt.beta_;
     } else if (t == 1) {
         //TODO: Add this case in the future;
-        L = Vec3(0.);
+        L = Vec3(-1.);
     } else if (s == 1) {
-        //TODO: Add this case in the future;
-        L = Vec3(0.);
+        const Vertex &v_cam_path = cameraVertices[t - 1];
+        const Vertex &v_light = lightVertices[0];
+        if (v_cam_path.is_connectable()) {
+            HitRecord rec;
+            auto p1 = v_cam_path.p(), p2 = v_light.p();
+            auto dir = unit_vector(p2 - p1);
+            auto ray_1to2 = Ray(p1, dir, 0.);
+
+            scene.world_ptr_->hit(ray_1to2, RAY_EPSILON, infinity, rec);
+            if ((rec.p_ - p2).near_zero()){
+                L = v_light.emitted(ray_1to2, rec, rec.u_, rec.v_, v_light.p());
+            }
+
+            Vec3 d = (p2 - p1);
+            double g = 1 / d.length_squared();
+            d *= std::sqrt(g);
+            if (v_cam_path.is_on_surface()) {
+                g *= abs_dot(v_cam_path.ng(), d);
+            }
+            g *= abs_dot(v_light.ng(), d);
+
+            L *= g;
+        }
     } else {
-        const Vertex &qs = lightVertices[s - 1], &pt = cameraVertices[t - 1];
-        if (qs.is_connectable() && pt.is_connectable()) {
-            L = qs.beta_ * qs.f(pt) * pt.f(qs) * pt.beta_;
-            if (!L.near_zero()) {
-                L *= G(scene, qs, pt);
-            };
+        const Vertex &v_light_path = lightVertices[s - 1], &v_cam_path = cameraVertices[t - 1];
+        if (v_light_path.is_connectable() && v_cam_path.is_connectable()) {
+            L = v_light_path.beta_ * v_light_path.f(v_cam_path) * v_cam_path.f(v_light_path) * v_cam_path.beta_;
+            L *= G(scene, v_light_path, v_cam_path);
         }
     }
 
@@ -192,7 +236,8 @@ Color BDPTIntegrator::G(const Scene &scene, const Vertex &v0, const Vertex &v1) 
         if (v1.is_on_surface())
             g *= abs_dot(v1.ng(), d);
 
-        if (Vertex::vis_test(v0, v1, scene)){
+        HitRecord rec;
+        if (Vertex::vis_test(v0, v1, scene, rec)){
             return g;
         }
         else{

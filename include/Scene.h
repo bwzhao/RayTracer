@@ -29,6 +29,9 @@ private:
     std::vector<Color> image_;
     std::vector<int> samples_;
 
+    std::vector<std::vector<std::vector<Color>>> image_debug;
+    std::vector<std::vector<std::vector<int>>> samples_debug;
+
 
 public:
     Scene(int image_width, int image_height, double aspect_ratio, int samples_per_pixel, int max_depth);
@@ -42,9 +45,14 @@ public:
     shared_ptr<Light> get_light_ptr() const{return light_ptr_;}
 
     void render(shared_ptr<Integrator> integrator_ptr);
-
+    void render_test(shared_ptr<Integrator> integrator_ptr);
     void set_pixel(int idx, Color pixel_color);
     void write_image(char *file_name);
+
+    // Only for debug
+    void set_pixel(int idx, Color pixel_color, int s, int t);
+    void write_image(char *file_name, int s, int t);
+
 
     friend PathTracingIntegrator;
     friend BDPTIntegrator;

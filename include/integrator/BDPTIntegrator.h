@@ -11,7 +11,7 @@ class Vertex;
 class Ray;
 
 
-enum class TransportMode { Radiance, Importance };
+enum class TransportMode { Forward, Backward };
 
 class BDPTIntegrator: public Integrator {
 public:
@@ -24,6 +24,8 @@ public:
     Color G(const Scene &scene, const Vertex &v0, const Vertex &v1);
 
     virtual Color render_pixel(const Scene & scene, double u, double v, int max_depth) override;
+
+    virtual void render_pixel_test(Scene &scene, double u, double v, int max_depth, int idx) override;
 };
 
 

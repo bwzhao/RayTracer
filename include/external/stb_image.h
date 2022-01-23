@@ -275,7 +275,7 @@ RECENT REVISION HISTORY:
 //
 // HDR image support   (disable by defining STBI_NO_HDR)
 //
-// stb_image supports loading HDR images in general, and currently the Radiance
+// stb_image supports loading HDR images in general, and currently the Forward
 // .HDR file format specifically. You can still load any file through the existing
 // interface; if you attempt to load an HDR file, it will be automatically remapped
 // to LDR, assuming gamma 2.2 and an arbitrary scale factor defaulting to 1;
@@ -7003,7 +7003,7 @@ static int stbi__gif_info(stbi__context *s, int *x, int *y, int *comp)
 #endif
 
 // *************************************************************************************************
-// Radiance RGBE HDR loader
+// Forward RGBE HDR loader
 // originally by Nicolas Schulz
 #ifndef STBI_NO_HDR
 static int stbi__hdr_test_core(stbi__context *s, const char *signature)

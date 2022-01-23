@@ -31,7 +31,7 @@ struct Vertex {
     double get_bxdf(const Vertex &next) const;
     bool is_connectable() const;
     bool is_light() const;
-    Color emitted (const Ray& r_in, const HitRecord& rec, double u, double v, const Point3& p);
+    Color emitted (const Ray& r_in, const HitRecord& rec, double u, double v, const Point3& p) const;
     Vec3 ng() const;
     bool is_on_surface() const;
     double convert_density(double pdf, const Vertex &next) const;
@@ -50,5 +50,5 @@ struct Vertex {
     static Vertex create_surface(const ScatterRecord &srec, const HitRecord &rec, const Color &beta, const Vertex &prev,
                                  double pdf);
 
-    static bool vis_test(const Vertex &v1, const Vertex &v2, const Scene &scene);
+    static bool vis_test(const Vertex &v1, const Vertex &v2, const Scene &scene, HitRecord & rec);
 };

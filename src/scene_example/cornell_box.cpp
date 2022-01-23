@@ -94,14 +94,16 @@ ObjectList cornell_box_reverse_light() {
 
     corneel_frame(objects);
 
-    shared_ptr<Material> aluminum = make_shared<Metal>(Color(0.8, 0.85, 0.88), 0.0);
-    shared_ptr<Object> box1 = make_shared<Box>(Point3(0, 0, 0), Point3(165, 330, 165), aluminum);
+//    shared_ptr<Material> aluminum = make_shared<Metal>(Color(0.8, 0.85, 0.88), 0.0);
+    shared_ptr<Material> white = make_shared<Lambertian>(Color(.73, .73, .73));
+//    auto glass = make_shared<Dielectric>(1.5);
+    shared_ptr<Object> box1 = make_shared<Box>(Point3(0, 0, 0), Point3(165, 330, 165), white);
     box1 = make_shared<rotate_y>(box1, 15);
     box1 = make_shared<translate>(box1, Vec3(265,0,295));
     objects.add(box1);
 
-    auto glass = make_shared<Dielectric>(1.5);
-    objects.add(make_shared<Sphere>(Point3(190, 90, 190), 90 , glass));
+
+    objects.add(make_shared<Sphere>(Point3(190, 90, 190), 90 , white));
 
     return objects;
 }

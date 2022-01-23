@@ -1,9 +1,26 @@
-# Path Tracing Renderer
+# Path Tracer with multi sampling technics
+## Overview
+
+
+## How to run
+### 1. Clone and build
+```sh
+git clone git@github.com:bwzhao/RayTracer.git
+git submodule update --init --recursive
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j8
+```
+### 2. Running
+Right now there are two examples:
+1. Forward path tracing for a Cornell Box.
+2. Bidirectional path tracing for a Cornell Box with reversed directions of light.
 
 ## Features:
 * ### Lighting: 
   * [x] area light
   * [ ] point light
+  * [ ] multi light source
 * ### Integrator:
   * [x] path tracing
   * [ ] bidirectional path tracing
@@ -11,6 +28,7 @@
 * ### Primitives: 
   * [x] triangle
   * [ ] mesh triangle
+  * [ ] circle
   * [x] rectangles
   * [x] sphere
 * ### Texture type:
