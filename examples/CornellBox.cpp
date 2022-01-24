@@ -51,8 +51,8 @@ int main(int argc, char **argv) {
     scene.set_light(light_ptr);
 
     // Render
-//    scene.render(path_tracing_integrator_ptr);
-    scene.render(BDLT_integrator_ptr);
+    scene.render(path_tracing_integrator_ptr);
+//    scene.render(BDLT_integrator_ptr);
     scene.write_image("Cornellbox.ppm");
 
 
