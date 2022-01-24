@@ -34,6 +34,7 @@ void Scene::render(shared_ptr<Integrator> integrator_ptr) {
                 auto u = (i + random_double()) / (image_width_ - 1);
                 auto v = (j + random_double()) / (image_height_ - 1);
                 auto pixel_color = integrator_ptr->render_pixel(*this, u, v, max_depth_);
+                set_pixel(idx, pixel_color);
             }
         }
     }

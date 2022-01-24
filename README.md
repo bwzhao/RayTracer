@@ -23,7 +23,7 @@ Right now there are two examples:
   * [ ] multi light source
 * ### Integrator:
   * [x] path tracing
-  * [ ] bidirectional path tracing
+  * [x] bidirectional path tracing
   * [ ] metropolis light transport
 * ### Primitives: 
   * [x] triangle

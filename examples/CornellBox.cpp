@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     const auto aspect_ratio = 1.0 / 1.0;
     const int image_width = 500;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 100;
+    const int samples_per_pixel = 500;
     const int max_depth = 50;
 
     Point3 lookfrom(278, 278, -800);
@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
     // Render
 //    scene.render(path_tracing_integrator_ptr);
     scene.render(BDLT_integrator_ptr);
-    scene.write_image(argv[1]);
+    scene.write_image("Cornellbox.ppm");
 
 
     return 0;
