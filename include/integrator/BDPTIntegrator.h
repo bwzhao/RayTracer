@@ -15,6 +15,8 @@ enum class TransportMode { Forward, Backward };
 
 class BDPTIntegrator: public Integrator {
 public:
+    BDPTIntegrator(int max_depth): Integrator(max_depth) {};
+
     int generate_camera_subpath(const Scene &scene, int max_depth, double u, double v, std::vector<Vertex> &path_camera);
     int generate_light_subpath(const Scene &scene, int max_depth, std::vector<Vertex> &path_light);
 
@@ -25,7 +27,7 @@ public:
 
     virtual Color render_pixel(const Scene & scene, double u, double v, int max_depth) override;
 
-    virtual void render_pixel_test(Scene &scene, double u, double v, int max_depth, int idx) override;
+    virtual void render_pixel_test(const Scene &scene, double u, double v, int max_depth, int idx) override;
 };
 
 

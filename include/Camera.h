@@ -2,6 +2,7 @@
 
 #include "utils/rt_utils.h"
 #include "Sampler.h"
+#include "Ray.h"
 
 class Camera {
 public:
