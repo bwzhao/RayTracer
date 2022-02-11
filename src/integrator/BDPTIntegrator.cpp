@@ -5,7 +5,7 @@
 int BDPTIntegrator::generate_camera_subpath(const Scene &scene, int max_depth, double u, double v, std::vector<Vertex> &path_camera) {
     if (max_depth == 0)
         return 0;
-    auto r_ini = scene.cam_.sample_ray(u, v);
+    auto r_ini = cam_.sample_ray(u, v);
 
     Color beta = Vec3(1., 1., 1.);
     path_camera[0] = Vertex::create_camera(r_ini, beta);
@@ -154,7 +154,7 @@ Color BDPTIntegrator::render_pixel(const Scene & scene, double u, double v, int 
     }
 }
 
-void BDPTIntegrator::render_pixel_test(Scene & scene, double u, double v, int max_depth, int idx) {
+void BDPTIntegrator::render_pixel_test(const Scene & scene, double u, double v, int max_depth, int idx) {
     std::vector<Vertex> path_camera(max_depth + 2);
     std::vector<Vertex> path_light(max_depth + 1);
 
@@ -171,7 +171,7 @@ void BDPTIntegrator::render_pixel_test(Scene & scene, double u, double v, int ma
                 continue;
             }
             if (s < 10 && t < 10) {
-                scene.set_pixel(idx, Lpath, s, t);
+                film_.set_pixel(idx, Lpath, s, t);
             }
         }
     }

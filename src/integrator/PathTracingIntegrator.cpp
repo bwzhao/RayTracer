@@ -1,7 +1,7 @@
 #include "integrator/PathTracingIntegrator.h"
 #include "Scene.h"
 
-Color PathTracingIntegrator::get_radiance(
+Color PathTracingIntegrator::Li(
         const Ray& r,
         const Scene & scene,
         int depth
@@ -23,7 +23,7 @@ Color PathTracingIntegrator::get_radiance(
 
     if (srec.is_specular_) {
         return srec.attenuation_
-               * get_radiance(srec.specular_ray_, scene, depth - 1);
+               * Li(srec.specular_ray_, scene, depth - 1);
     }
 
 //    auto light_ptr = make_shared<ObjectPdf>(scene.focus_lights_ptr_, rec.p_);
@@ -35,12 +35,12 @@ Color PathTracingIntegrator::get_radiance(
 
     return emitted
            + srec.attenuation_ * rec.mat_ptr_->scattering_bxdf(r.direction(), rec.normal_, scattered.direction())
-             * get_radiance(scattered, scene, depth - 1) / pdf_val;
+             * Li(scattered, scene, depth - 1) / pdf_val;
 }
 
 Color PathTracingIntegrator::render_pixel(const Scene & scene, double u, double v, int max_depth) {
-    Ray r = scene.cam_.sample_ray(u, v);
-    return get_radiance(r, scene, max_depth);
+    Ray r = cam_.sample_ray(u, v);
+    return Li(r, scene, max_depth);
 }
 
 

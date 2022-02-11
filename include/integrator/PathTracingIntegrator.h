@@ -13,8 +13,8 @@ class PathTracingIntegrator: public Integrator{
 private:
 
 public:
-
-    Color get_radiance(const Ray& r, const Scene & scene, int depth);
+    PathTracingIntegrator(int max_depth): Integrator(max_depth){};
+    Color Li(const Ray& r, const Scene & scene, int depth);
 
     virtual Color render_pixel(const Scene & scene, double u, double v, int max_depth) override;
 };

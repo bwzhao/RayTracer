@@ -28,13 +28,12 @@ int main(int argc, char **argv) {
     auto time0 = 0.0;
     auto time1 = 1.0;
 
-    Scene scene(image_width, image_height, aspect_ratio, samples_per_pixel, max_depth);
-    scene.set_camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, time0, time1);
-
-    std::shared_ptr<Integrator> path_tracing_integrator_ptr = std::make_shared<PathTracingIntegrator>();
-    std::shared_ptr<Integrator> BDPT_integrator_ptr = std::make_shared<BDPTIntegrator>();
+    std::shared_ptr<Integrator> integrator_ptr = std::make_shared<BDPTIntegrator>(max_depth);
+    integrator_ptr->set_film(image_width, image_height, aspect_ratio, samples_per_pixel);
+    integrator_ptr->set_camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, time0, time1);
 
     // World
+    Scene scene;
     auto world = cornell_box_reverse_light();
     shared_ptr<ObjectList> lights_ptr = make_shared<ObjectList>();
     lights_ptr->add(make_shared<XZRect>(213, 343, 227, 332, 500, shared_ptr<Material>()));
@@ -48,8 +47,8 @@ int main(int argc, char **argv) {
 
     // Render
 //    scene.render(path_tracing_integrator_ptr);
-    scene.render(BDPT_integrator_ptr);
-    scene.write_image("CornellBoxReverseLight.ppm");
+    integrator_ptr->render(scene);
+    integrator_ptr->write_image("CornellBoxReverseLight.ppm");
 
 
     return 0;

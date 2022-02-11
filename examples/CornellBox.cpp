@@ -28,13 +28,13 @@ int main(int argc, char **argv) {
     auto time0 = 0.0;
     auto time1 = 1.0;
 
-    Scene scene(image_width, image_height, aspect_ratio, samples_per_pixel, max_depth);
-    scene.set_camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, time0, time1);
-
-    std::shared_ptr<Integrator> path_tracing_integrator_ptr = std::make_shared<PathTracingIntegrator>();
-    std::shared_ptr<Integrator> BDLT_integrator_ptr = std::make_shared<BDPTIntegrator>();
+    std::shared_ptr<Integrator> integrator_ptr = std::make_shared<PathTracingIntegrator>(max_depth);
+//    std::shared_ptr<Integrator> integrator_ptr = std::make_shared<BDPTIntegrator>(max_depth);
+    integrator_ptr->set_film(image_width, image_height, aspect_ratio, samples_per_pixel);
+    integrator_ptr->set_camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, time0, time1);
 
     // World
+    Scene scene;
     auto world = cornell_box();
 //    auto world = load_obj();
     shared_ptr<ObjectList> lights_ptr = make_shared<ObjectList>();
@@ -51,9 +51,8 @@ int main(int argc, char **argv) {
     scene.set_light(light_ptr);
 
     // Render
-    scene.render(path_tracing_integrator_ptr);
-//    scene.render(BDLT_integrator_ptr);
-    scene.write_image("Cornellbox.ppm");
+    integrator_ptr->render(scene);
+    integrator_ptr->write_image("Cornellbox.ppm");
 
 
     return 0;
