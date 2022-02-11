@@ -18,6 +18,7 @@ public:
                     double focus_dist, double time0, double time1);
 
     void write_image(char *file_name);
+    void write_image(char *file_name, int s, int t);
 
     virtual void render(const Scene &scene);
     virtual void render_test(const Scene &scene);

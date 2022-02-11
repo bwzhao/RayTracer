@@ -43,3 +43,7 @@ void Integrator::render_test(const Scene &scene) {
 void Integrator::write_image(char *file_name) {
     film_.write_image(file_name);
 }
+
+void Integrator::write_image(char *file_name, int s, int t) {
+    film_.write_image(file_name, s, t);
+}

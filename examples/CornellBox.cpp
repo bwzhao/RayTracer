@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     const auto aspect_ratio = 1.0 / 1.0;
     const int image_width = 500;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 10;
+    const int samples_per_pixel = 500;
     const int max_depth = 50;
 
     Point3 lookfrom(278, 278, -800);
@@ -28,10 +28,10 @@ int main(int argc, char **argv) {
     auto time0 = 0.0;
     auto time1 = 1.0;
 
-    std::shared_ptr<Integrator> path_tracing_integrator_ptr = std::make_shared<PathTracingIntegrator>(max_depth);
-//    std::shared_ptr<Integrator> BDLT_integrator_ptr = std::make_shared<BDPTIntegrator>();
-    path_tracing_integrator_ptr->set_film(image_width, image_height, aspect_ratio, samples_per_pixel);
-    path_tracing_integrator_ptr->set_camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, time0, time1);
+    std::shared_ptr<Integrator> integrator_ptr = std::make_shared<PathTracingIntegrator>(max_depth);
+//    std::shared_ptr<Integrator> integrator_ptr = std::make_shared<BDPTIntegrator>(max_depth);
+    integrator_ptr->set_film(image_width, image_height, aspect_ratio, samples_per_pixel);
+    integrator_ptr->set_camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, time0, time1);
 
     // World
     Scene scene;
@@ -51,9 +51,8 @@ int main(int argc, char **argv) {
     scene.set_light(light_ptr);
 
     // Render
-    path_tracing_integrator_ptr->render(scene);
-//    scene.render(BDLT_integrator_ptr);
-    path_tracing_integrator_ptr->write_image("Cornellbox.ppm");
+    integrator_ptr->render(scene);
+    integrator_ptr->write_image("Cornellbox.ppm");
 
 
     return 0;
